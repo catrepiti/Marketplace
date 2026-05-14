@@ -7,7 +7,7 @@ import {
   ShoppingCart, MessageSquare, Megaphone,
   Users, Building2, LogOut, ChevronDown,
   PanelLeftClose, PanelLeftOpen, ChevronRight, LayoutGrid,
-  Swords, Boxes,
+  Swords, Boxes, UserCog,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ROLE_LABELS, Role } from '@/lib/session'
@@ -20,6 +20,7 @@ const teamNav = [
   { href: '/anuncios',     icon: Megaphone,    label: 'Anúncios',     roles: ['ADMIN', 'TRAFFIC_MANAGER'] },
   { href: '/concorrencia', icon: Swords,       label: 'Concorrência', roles: ['ADMIN', 'TRAFFIC_MANAGER', 'PROJECT_MANAGER'] },
   { href: '/estoque',      icon: Boxes,        label: 'Estoque',      roles: ['ADMIN', 'TRAFFIC_MANAGER', 'PROJECT_MANAGER'] },
+  { href: '/minha-conta', icon: UserCog,      label: 'Minha Conta',  roles: ['ADMIN', 'TRAFFIC_MANAGER', 'PROJECT_MANAGER', 'CLIENT'] },
 ]
 
 const adminNav = [

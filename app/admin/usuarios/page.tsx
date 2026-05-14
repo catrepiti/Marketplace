@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { Plus, Trash2, Loader2, Users } from 'lucide-react'
+import { Plus, Trash2, Loader2, Users, KeyRound } from 'lucide-react'
 import { Header } from '@/components/layout/Header'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -25,6 +25,11 @@ export default function UsuariosPage() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'CLIENT', clientId: '' })
+  const [resetModal, setResetModal] = useState<{ id: string; name: string } | null>(null)
+  const [resetPw, setResetPw]       = useState('')
+  const [resetLoading, setResetLoading] = useState(false)
+  const [resetError, setResetError]     = useState('')
+  const [resetOk, setResetOk]           = useState(false)
 
   const fetchAll = async () => {
     const [u, c] = await Promise.all([
@@ -59,6 +64,22 @@ export default function UsuariosPage() {
     if (!confirm(`Remover usuário "${name}"?`)) return
     await fetch(`/api/admin/users?id=${id}`, { method: 'DELETE' })
     fetchAll()
+  }
+
+  const handleReset = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setResetError('')
+    setResetLoading(true)
+    const res = await fetch('/api/admin/users', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: resetModal!.id, password: resetPw }),
+    })
+    const data = await res.json()
+    setResetLoading(false)
+    if (!res.ok) { setResetError(data.error); return }
+    setResetOk(true)
+    setTimeout(() => { setResetModal(null); setResetPw(''); setResetOk(false) }, 1500)
   }
 
   return (
@@ -150,6 +171,9 @@ export default function UsuariosPage() {
                       <td className="px-4 py-3 text-xs text-muted-foreground">{u.client?.name ?? '—'}</td>
                       <td className="px-4 py-3 text-xs text-muted-foreground">{formatDate(u.createdAt)}</td>
                       <td className="px-4 py-3">
+                        <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-primary" onClick={() => { setResetModal({ id: u.id, name: u.name ?? u.email }); setResetPw(''); setResetError(''); setResetOk(false) }} title="Redefinir senha">
+                          <KeyRound className="h-3.5 w-3.5" />
+                        </Button>
                         <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive" onClick={() => handleDelete(u.id, u.name ?? u.email)}>
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>
@@ -162,6 +186,38 @@ export default function UsuariosPage() {
           </CardContent>
         </Card>
       </div>
+
+      {resetModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-2xl space-y-4">
+            <div>
+              <h3 className="text-sm font-bold text-foreground">Redefinir senha</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">{resetModal.name}</p>
+            </div>
+            <form onSubmit={handleReset} className="space-y-3">
+              <div>
+                <label className="block text-xs font-medium text-muted-foreground mb-1">Nova senha</label>
+                <Input
+                  type="password"
+                  value={resetPw}
+                  onChange={e => setResetPw(e.target.value)}
+                  placeholder="Mínimo 6 caracteres"
+                  required
+                />
+              </div>
+              {resetError && <p className="text-xs text-destructive bg-destructive/10 px-3 py-2 rounded-lg">{resetError}</p>}
+              {resetOk    && <p className="text-xs text-emerald-600 bg-emerald-50 px-3 py-2 rounded-lg">✓ Senha redefinida!</p>}
+              <div className="flex gap-2 pt-1">
+                <Button type="submit" size="sm" disabled={resetLoading} className="flex-1">
+                  {resetLoading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                  Salvar
+                </Button>
+                <Button type="button" size="sm" variant="ghost" onClick={() => setResetModal(null)}>Cancelar</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

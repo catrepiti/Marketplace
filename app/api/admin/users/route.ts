@@ -52,3 +52,13 @@ export async function DELETE(request: Request) {
   await prisma.user.delete({ where: { id } })
   return NextResponse.json({ ok: true })
 }
+
+export async function PATCH(request: Request) {
+  if (!await requireAdmin()) return NextResponse.json({ error: 'Não autorizado' }, { status: 403 })
+  const { id, password } = await request.json()
+  if (!id || !password || password.length < 6)
+    return NextResponse.json({ error: 'ID e senha (mín. 6 caracteres) obrigatórios' }, { status: 400 })
+  const hashed = await bcrypt.hash(password, 12)
+  await prisma.user.update({ where: { id }, data: { password: hashed } })
+  return NextResponse.json({ ok: true })
+}
