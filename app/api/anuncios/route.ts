@@ -45,19 +45,6 @@ function generateCampaigns(): AdCampaign[] {
     { marketplace: 'AMAZON', name: 'Acessórios Tech – Sponsored Display',     type: 'Display',    status: 'paused'  },
     { marketplace: 'AMAZON', name: 'Headphones Premium – Sponsored Products', type: 'Sponsored',  status: 'active'  },
     { marketplace: 'AMAZON', name: 'Câmeras e Webcams – Brand Store',         type: 'Brand',      status: 'active'  },
-    // Magalu
-    { marketplace: 'MAGALU', name: 'TV 4K LG – Produto em Destaque',          type: 'Destaque',   status: 'active'  },
-    { marketplace: 'MAGALU', name: 'Eletrodomésticos Casa – Categoria',        type: 'Categoria',  status: 'active'  },
-    { marketplace: 'MAGALU', name: 'Air Fryer Premium – Produto',              type: 'Produto',    status: 'paused'  },
-    { marketplace: 'MAGALU', name: 'Geladeiras e Freezers – Search',           type: 'Search',     status: 'active'  },
-    // Americanas
-    { marketplace: 'AMERICANAS', name: 'Moda Feminina Outono – Destaque',       type: 'Destaque',   status: 'active'  },
-    { marketplace: 'AMERICANAS', name: 'Perfumes Importados – Patrocinado',     type: 'Patrocinado',status: 'active'  },
-    { marketplace: 'AMERICANAS', name: 'Calçados Esportivos – Categoria',       type: 'Categoria',  status: 'ended'   },
-    // Casas Bahia
-    { marketplace: 'CASASBABIA', name: 'Sofás e Poltronas – Destaque',          type: 'Destaque',   status: 'active'  },
-    { marketplace: 'CASASBABIA', name: 'Colchões e Camas – Patrocinado',        type: 'Patrocinado',status: 'active'  },
-    { marketplace: 'CASASBABIA', name: 'Móveis de Escritório – Categoria',      type: 'Categoria',  status: 'paused'  },
   ]
 
   return templates.map((c, i) => {

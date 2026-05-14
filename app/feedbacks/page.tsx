@@ -22,9 +22,6 @@ const MP_DARK: Record<string, { text: string; dot: string; bar: string; glow: st
   mercadolivre: { text: 'text-yellow-400',  dot: 'bg-yellow-400',  bar: 'bg-yellow-400/20 border-yellow-400/20',  glow: 'from-yellow-500/8'  },
   shopee:       { text: 'text-orange-400',  dot: 'bg-orange-400',  bar: 'bg-orange-400/20 border-orange-400/20',  glow: 'from-orange-500/8'  },
   amazon:       { text: 'text-amber-400',   dot: 'bg-amber-400',   bar: 'bg-amber-400/20  border-amber-400/20',   glow: 'from-amber-500/8'   },
-  magalu:       { text: 'text-blue-400',    dot: 'bg-blue-400',    bar: 'bg-blue-400/20   border-blue-400/20',    glow: 'from-blue-500/8'    },
-  americanas:   { text: 'text-red-400',     dot: 'bg-red-400',     bar: 'bg-red-400/20    border-red-400/20',     glow: 'from-red-500/8'     },
-  casasbahia:   { text: 'text-indigo-400',  dot: 'bg-indigo-400',  bar: 'bg-indigo-400/20 border-indigo-400/20',  glow: 'from-indigo-500/8'  },
 }
 
 function StarDisplay({ rating }: { rating: number }) {

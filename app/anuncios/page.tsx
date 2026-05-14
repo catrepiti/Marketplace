@@ -30,9 +30,6 @@ const MP_DARK: Record<string, { text: string; dot: string; glow: string; bar: st
   MERCADOLIVRE: { text: 'text-yellow-400', dot: 'bg-yellow-400', glow: 'from-yellow-500/10', bar: 'bg-yellow-400', border: 'border-yellow-500/20' },
   SHOPEE:       { text: 'text-orange-400', dot: 'bg-orange-400', glow: 'from-orange-500/10', bar: 'bg-orange-400', border: 'border-orange-500/20' },
   AMAZON:       { text: 'text-amber-400',  dot: 'bg-amber-400',  glow: 'from-amber-500/10',  bar: 'bg-amber-400',  border: 'border-amber-500/20'  },
-  MAGALU:       { text: 'text-blue-400',   dot: 'bg-blue-400',   glow: 'from-blue-500/10',   bar: 'bg-blue-400',   border: 'border-blue-500/20'   },
-  AMERICANAS:   { text: 'text-red-400',    dot: 'bg-red-400',    glow: 'from-red-500/10',    bar: 'bg-red-400',    border: 'border-red-500/20'    },
-  CASASBAHIA:   { text: 'text-indigo-400', dot: 'bg-indigo-400', glow: 'from-indigo-500/10', bar: 'bg-indigo-400', border: 'border-indigo-500/20' },
 }
 const DEFAULT_MP = { text: 'text-white/60', dot: 'bg-white/40', glow: 'from-white/5', bar: 'bg-white/40', border: 'border-white/10' }
 

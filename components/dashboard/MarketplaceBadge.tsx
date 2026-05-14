@@ -7,18 +7,12 @@ const BADGE_DARK: Record<string, string> = {
   mercadolivre: 'bg-yellow-500/10 border border-yellow-500/20 text-yellow-400',
   shopee:       'bg-orange-500/10 border border-orange-500/20 text-orange-400',
   amazon:       'bg-amber-500/10  border border-amber-500/20  text-amber-400',
-  magalu:       'bg-blue-500/10   border border-blue-500/20   text-blue-400',
-  americanas:   'bg-red-500/10    border border-red-500/20    text-red-400',
-  casasbahia:   'bg-indigo-500/10 border border-indigo-500/20 text-indigo-400',
 }
 
 const DOT_COLOR: Record<string, string> = {
   mercadolivre: 'bg-yellow-400',
   shopee:       'bg-orange-400',
   amazon:       'bg-amber-400',
-  magalu:       'bg-blue-400',
-  americanas:   'bg-red-400',
-  casasbahia:   'bg-indigo-400',
 }
 
 export function MarketplaceBadge({

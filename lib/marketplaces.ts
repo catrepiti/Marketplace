@@ -2,9 +2,6 @@ export type MarketplaceKey =
   | 'mercadolivre'
   | 'shopee'
   | 'amazon'
-  | 'magalu'
-  | 'americanas'
-  | 'casasbabia'
 
 export interface MarketplaceDef {
   key: MarketplaceKey
@@ -80,57 +77,6 @@ export const MARKETPLACES: Record<MarketplaceKey, MarketplaceDef> = {
       tokenHelp: 'Gere no Seller Central → Aplicações → Desenvolver Aplicações → Credenciais SP-API.',
       tokenUrl: 'https://sellercentral.amazon.com.br',
       oauthHint: 'Acesse o Seller Central Amazon Brasil, vá em Aplicações e gere suas credenciais SP-API.',
-    },
-  },
-  magalu: {
-    key: 'magalu',
-    keyUpper: 'MAGALU',
-    label: 'Magalu',
-    abbr: 'MG',
-    chartColor: '#0086C3',
-    tailwind: { text: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200', dot: 'bg-blue-500', bar: 'bg-blue-500' },
-    connect: {
-      logo: '🏪',
-      sellerIdLabel: 'Seller ID',
-      sellerIdHelp: 'Encontre no Painel do Vendedor Magazine Luiza → Minha Conta → Dados do Vendedor.',
-      tokenLabel: 'API Key',
-      tokenHelp: 'Gere em developers.magazineluiza.com.br → Meus Aplicativos → Credenciais.',
-      tokenUrl: 'https://developers.magazineluiza.com.br',
-      oauthHint: 'Acesse developers.magazineluiza.com.br, cadastre seu aplicativo e obtenha a API Key.',
-    },
-  },
-  americanas: {
-    key: 'americanas',
-    keyUpper: 'AMERICANAS',
-    label: 'Americanas',
-    abbr: 'AM',
-    chartColor: '#E30613',
-    tailwind: { text: 'text-red-700', bg: 'bg-red-50', border: 'border-red-200', dot: 'bg-red-500', bar: 'bg-red-500' },
-    connect: {
-      logo: '🏬',
-      sellerIdLabel: 'Seller ID Skyhub',
-      sellerIdHelp: 'Encontre no Skyhub Painel → Minha Conta → Identificação do Lojista.',
-      tokenLabel: 'API Token Skyhub',
-      tokenHelp: 'Obtenha no Skyhub → Integrações → Token de Integração.',
-      tokenUrl: 'https://api.skyhub.com.br',
-      oauthHint: 'Acesse o Skyhub (integrador oficial Americanas/B2W) e obtenha o token de integração.',
-    },
-  },
-  casasbabia: {
-    key: 'casasbabia',
-    keyUpper: 'CASASBABIA',
-    label: 'Casas Bahia',
-    abbr: 'CB',
-    chartColor: '#0055A6',
-    tailwind: { text: 'text-indigo-700', bg: 'bg-indigo-50', border: 'border-indigo-200', dot: 'bg-indigo-500', bar: 'bg-indigo-500' },
-    connect: {
-      logo: '🏠',
-      sellerIdLabel: 'Seller ID',
-      sellerIdHelp: 'Encontre no Portal do Lojista Casas Bahia → Configurações → Dados da Loja.',
-      tokenLabel: 'API Key',
-      tokenHelp: 'Gere no Portal do Lojista → Integrações → Chave de API.',
-      tokenUrl: 'https://sellers.casasbahia.com.br',
-      oauthHint: 'Acesse o Portal do Lojista Casas Bahia e obtenha sua API Key na seção de Integrações.',
     },
   },
 }

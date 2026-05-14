@@ -33,46 +33,13 @@ const productsByMP: Record<Marketplace, { name: string; sku: string; price: numb
     { name: 'Teclado Sem Fio Bluetooth',        sku: 'AZ-TEC-007', price: 219.9  },
     { name: 'Mouse Sem Fio Silencioso',         sku: 'AZ-MOU-008', price: 149.9  },
   ],
-  magalu: [
-    { name: 'TV 50" 4K UHD Smart LED',         sku: 'MG-TV-001',  price: 1999.0 },
-    { name: 'Geladeira Frost Free 382L',        sku: 'MG-GEL-002', price: 2799.0 },
-    { name: 'Micro-ondas 30L Espelhado',        sku: 'MG-MIC-003', price: 599.0  },
-    { name: 'Ar Condicionado 12000 BTUs',       sku: 'MG-ARC-004', price: 1499.0 },
-    { name: 'Aspirador de Pó Vertical',         sku: 'MG-ASP-005', price: 329.9  },
-    { name: 'Liquidificador 1200W Turbo',       sku: 'MG-LIQ-006', price: 189.9  },
-    { name: 'Cafeteira Expresso 15 Bar',        sku: 'MG-CAF-007', price: 449.9  },
-    { name: 'Fritadeira Air Fryer 5L',          sku: 'MG-FRI-008', price: 399.9  },
-  ],
-  americanas: [
-    { name: 'Perfume Masculino 100ml',          sku: 'AM-PER-001', price: 299.9  },
-    { name: 'Conjunto Pijama Inverno',          sku: 'AM-PIJ-002', price: 99.9   },
-    { name: 'Kit Maquiagem Completo',           sku: 'AM-MAQ-003', price: 189.9  },
-    { name: 'Tênis Casual Feminino',            sku: 'AM-TEN-004', price: 179.9  },
-    { name: 'Camiseta Polo Masculina',          sku: 'AM-CAM-005', price: 79.9   },
-    { name: 'Bolsa Feminina Couro Sintético',   sku: 'AM-BOL-006', price: 149.9  },
-    { name: 'Relogio Masculino Analógico',      sku: 'AM-REL-007', price: 249.9  },
-    { name: 'Óculos de Sol UV400',              sku: 'AM-OCS-008', price: 89.9   },
-  ],
-  casasbabia: [
-    { name: 'Sofá Retrátil 3 Lugares',         sku: 'CB-SOF-001', price: 1899.0 },
-    { name: 'Cama Box Casal Molas',             sku: 'CB-CAM-002', price: 1299.0 },
-    { name: 'Mesa de Jantar 6 Lugares',         sku: 'CB-MES-003', price: 1599.0 },
-    { name: 'Guarda-Roupa 6 Portas',            sku: 'CB-GUA-004', price: 999.0  },
-    { name: 'Colchão Molas Ensacadas Queen',    sku: 'CB-COL-005', price: 1499.0 },
-    { name: 'Poltrona Decorativa Giratória',    sku: 'CB-POL-006', price: 649.9  },
-    { name: 'Rack TV Suspenso 180cm',           sku: 'CB-RAC-007', price: 499.9  },
-    { name: 'Painel Lareira Elétrica',          sku: 'CB-LAR-008', price: 799.9  },
-  ],
 }
 
 // Distribution weights for each marketplace (must sum to ~1.0)
 const MP_WEIGHTS: Record<Marketplace, number> = {
-  mercadolivre: 0.33,
-  shopee:       0.24,
-  amazon:       0.20,
-  magalu:       0.12,
-  americanas:   0.07,
-  casasbabia:   0.04,
+  mercadolivre: 0.45,
+  shopee:       0.33,
+  amazon:       0.22,
 }
 
 const MP_CUMULATIVE: { mp: Marketplace; cum: number }[] = (() => {
@@ -91,9 +58,6 @@ function externalId(mp: Marketplace, rand: () => number): string {
     case 'mercadolivre': return `ML-${n}`
     case 'shopee':       return `SPX${n}${n}`
     case 'amazon':       return `AMZ-${n}-BR`
-    case 'magalu':       return `MGL${n}`
-    case 'americanas':   return `SKY-${n}`
-    case 'casasbabia':   return `CB${n}`
   }
 }
 

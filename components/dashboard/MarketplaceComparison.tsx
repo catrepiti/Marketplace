@@ -28,24 +28,6 @@ const DARK_ACCENT: Record<string, { glow: string; text: string; bar: string; bad
     bar:   'bg-amber-400',
     badge: 'bg-amber-500/10 border-amber-500/20 text-amber-400',
   },
-  magalu: {
-    glow:  'from-blue-500/10 to-transparent',
-    text:  'text-blue-400',
-    bar:   'bg-blue-400',
-    badge: 'bg-blue-500/10 border-blue-500/20 text-blue-400',
-  },
-  americanas: {
-    glow:  'from-red-500/10 to-transparent',
-    text:  'text-red-400',
-    bar:   'bg-red-400',
-    badge: 'bg-red-500/10 border-red-500/20 text-red-400',
-  },
-  casasbahia: {
-    glow:  'from-indigo-500/10 to-transparent',
-    text:  'text-indigo-400',
-    bar:   'bg-indigo-400',
-    badge: 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400',
-  },
 }
 
 const DEFAULT_ACCENT = {
