@@ -3,7 +3,7 @@ import { useEffect, useState, useMemo, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import {
   Search, SlidersHorizontal, Calendar, AlertTriangle, X,
-  Tag, ExternalLink, ChevronRight, TrendingUp, TrendingDown,
+  ExternalLink, ChevronRight, TrendingUp, TrendingDown,
   ChevronUp, UserPlus,
 } from 'lucide-react'
 import { Header } from '@/components/layout/Header'
@@ -80,25 +80,6 @@ function Sparkline({ data, color, uid }: { data: number[]; color: string; uid: s
         strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
-}
-
-// ── Seeded manager names ───────────────────────────────────────────────────────
-const ALL_MANAGERS = [
-  'Lucas D & Rafael', 'Felipe', 'Lucas & Felipe', 'Vinicius & Felipe',
-  'Rafael', 'Ana & Lucas', 'Marcos', 'Carla & Felipe',
-]
-function seedHash(s: string) {
-  let h = 0
-  for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0
-  return Math.abs(h)
-}
-function getManagers(id: string): string[] {
-  const h = seedHash(id)
-  const idx = h % ALL_MANAGERS.length
-  const two = (h >> 4) % 3 !== 0
-  return two
-    ? [ALL_MANAGERS[idx], ALL_MANAGERS[(idx + 3) % ALL_MANAGERS.length]]
-    : [ALL_MANAGERS[idx]]
 }
 
 // ── Trend badge ────────────────────────────────────────────────────────────────
@@ -547,8 +528,6 @@ export default function VisaoGeralPage() {
                 </div>
               ))
             : sorted.map((client, idx) => {
-                const managers = getManagers(client.id)
-
                 const cardMetrics = [
                   { label: 'Faturamento',     value: fmtCompact(client.filteredGmv),                    color: 'text-blue-400'    },
                   { label: 'Total investido', value: fmtCompact(client.filteredAdSpend),                 color: 'text-amber-400'   },
@@ -563,18 +542,7 @@ export default function VisaoGeralPage() {
                     className="group relative rounded-xl border border-white/[0.07] bg-white/[0.03] p-5 flex flex-col gap-3 hover:bg-white/[0.05] hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 cursor-default"
                   >
                     <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-primary/8 to-transparent rounded-t-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <div className="relative flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-1.5 flex-wrap min-w-0">
-                        {managers.map(m => (
-                          <span key={m}
-                            className="inline-flex items-center gap-1 text-[11px] bg-white/[0.06] rounded-full px-2.5 py-0.5 text-white/50 font-medium border border-white/[0.08]"
-                          >
-                            {m}
-                            <X className="h-2.5 w-2.5 opacity-40" />
-                          </span>
-                        ))}
-                        <Tag className="h-3.5 w-3.5 text-white/20" />
-                      </div>
+                    <div className="relative flex items-center justify-end gap-2">
                       <span className="text-sm font-black text-white/25 shrink-0">{idx + 1}º</span>
                     </div>
 
