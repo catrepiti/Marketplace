@@ -1,0 +1,12 @@
+.next/
+node_modules/
+.env
+.env.local
+.env.*.local
+*.tsbuildinfo
+next-env.d.ts
+.vercel
+
+# Banco local SQLite
+prisma/*.db
+prisma/*.db-journal

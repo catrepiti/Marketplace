@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Role values: ADMIN | TRAFFIC_MANAGER | PROJECT_MANAGER | CLIENT
+// MarketplaceType values: MERCADOLIVRE | SHOPEE | AMAZON | MAGALU | AMERICANAS | CASASBABIA
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          String    @default("CLIENT")
+  clientId      String?
+  client        Client?   @relation(fields: [clientId], references: [id])
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Client {
+  id                  String               @id @default(cuid())
+  name                String
+  slug                String               @unique
+  logoUrl             String?
+  users               User[]
+  marketplaceAccounts MarketplaceAccount[]
+  documents           ClientDocument[]
+  connectionInvites   ConnectionInvite[]
+  notificationConfig  NotificationConfig?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+}
+
+model NotificationConfig {
+  id               String   @id @default(cuid())
+  clientId         String   @unique
+  client           Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  phoneNumber      String   @default("")
+  apiUrl           String   @default("")
+  apiKey           String   @default("")
+  apiInstance      String   @default("")
+  notifyOnSale     Boolean  @default(true)
+  notifyOnFeedback Boolean  @default(true)
+  notifyOnQuestion Boolean  @default(false)
+  minSaleValue     Float    @default(0)
+  active           Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model NotificationLog {
+  id          String   @id @default(cuid())
+  clientId    String
+  type        String
+  message     String
+  phoneNumber String
+  status      String   @default("sent")
+  error       String?
+  sentAt      DateTime @default(now())
+}
+
+model ConnectionInvite {
+  id          String    @id @default(cuid())
+  token       String    @unique @default(cuid())
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  marketplace String
+  expiresAt   DateTime
+  usedAt      DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+model ClientDocument {
+  id          String   @id @default(cuid())
+  clientId    String
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  name        String
+  fileUrl     String
+  fileType    String?
+  fileSize    Int?
+  uploadedBy  String?
+  createdAt   DateTime @default(now())
+}
+
+model MarketplaceAccount {
+  id           String    @id @default(cuid())
+  clientId     String
+  client       Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  marketplace  String
+  accountName  String
+  sellerId     String?
+  appId        String?
+  appSecret    String?
+  accessToken  String?
+  refreshToken String?
+  expiresAt    DateTime?
+  status       String    @default("active")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@unique([clientId, marketplace])
+}
+
+// ── NextAuth required tables ──────────────────────────────────────────────────
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
