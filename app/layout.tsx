@@ -12,8 +12,14 @@ const jakarta = Plus_Jakarta_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'merly',
+  title: { default: 'merly', template: '%s · merly' },
   description: 'Plataforma unificada de gestão de marketplaces',
+  metadataBase: new URL('https://merly.com.br'),
+  themeColor: '#0080ff',
+  icons: {
+    icon:  [{ url: '/icon', type: 'image/png', sizes: '32x32' }],
+    apple: [{ url: '/apple-icon', type: 'image/png', sizes: '180x180' }],
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
