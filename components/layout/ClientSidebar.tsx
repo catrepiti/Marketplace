@@ -52,11 +52,11 @@ export function ClientSidebar() {
   return (
     <aside
       style={{ width }}
-      className="fixed inset-y-0 left-0 z-40 flex flex-col border-r border-border bg-card sidebar-transition overflow-hidden"
+      className="fixed inset-y-0 left-0 z-40 flex flex-col border-r border-white/[0.06] bg-[#07090f] sidebar-transition overflow-hidden"
     >
       {/* ── Logo + toggle ── */}
       <div className={cn(
-        'flex h-14 items-center border-b border-border shrink-0',
+        'flex h-14 items-center border-b border-white/[0.06] shrink-0',
         collapsed ? 'justify-center px-2' : 'justify-between px-4'
       )}>
         {!collapsed && (
@@ -76,7 +76,7 @@ export function ClientSidebar() {
           </div>
         )}
         {!collapsed && (
-          <button onClick={toggle} className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground shrink-0">
+          <button onClick={toggle} className="flex h-7 w-7 items-center justify-center rounded-lg text-white/30 hover:bg-white/[0.06] hover:text-white transition-colors shrink-0">
             <PanelLeftClose className="h-4 w-4" />
           </button>
         )}
@@ -85,14 +85,14 @@ export function ClientSidebar() {
       <div className="flex-1 overflow-y-auto overflow-x-hidden py-3 px-2 space-y-0.5">
         {/* Expand button when collapsed */}
         {collapsed && (
-          <button onClick={toggle} className="group relative flex w-full items-center justify-center rounded-xl p-2.5 text-muted-foreground hover:bg-accent hover:text-foreground mb-1">
+          <button onClick={toggle} className="group relative flex w-full items-center justify-center rounded-xl p-2.5 text-white/30 hover:bg-white/[0.06] hover:text-white transition-colors mb-1">
             <PanelLeftOpen className="h-[18px] w-[18px]" />
             <Tooltip label="Expandir menu" show={collapsed} />
           </button>
         )}
 
         {!collapsed && (
-          <p className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">Menu</p>
+          <p className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-widest text-white/25">Menu</p>
         )}
 
         {nav.map(item => {
@@ -101,7 +101,7 @@ export function ClientSidebar() {
             <Link key={item.href} href={item.href}
               className={cn(
                 'group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150',
-                active ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-accent hover:text-foreground',
+                active ? 'nav-active-glow text-white' : 'text-white/40 hover:bg-white/5 hover:text-white/80',
                 collapsed && 'justify-center px-2.5'
               )}>
               <item.icon className="h-[18px] w-[18px] shrink-0" />
@@ -114,20 +114,20 @@ export function ClientSidebar() {
       </div>
 
       {/* ── User footer ── */}
-      <div className="border-t border-border shrink-0 p-2">
+      <div className="border-t border-white/[0.06] shrink-0 p-2">
         <div className={cn('flex items-center gap-2.5 rounded-xl px-2 py-2', collapsed && 'justify-center px-1')}>
-          <div className="group relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+          <div className="group relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 border border-primary/20 text-xs font-bold text-primary">
             {user?.name?.charAt(0) ?? '?'}
             <Tooltip label={user?.name ?? 'Cliente'} show={collapsed} />
           </div>
           {!collapsed && (
             <>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-foreground truncate">{user?.name ?? 'Cliente'}</p>
-                <p className="text-[10px] text-muted-foreground truncate">{user?.email}</p>
+                <p className="text-xs font-semibold text-white truncate">{user?.name ?? 'Cliente'}</p>
+                <p className="text-[10px] text-white/40 truncate">{user?.email}</p>
               </div>
               <button onClick={() => signOut({ callbackUrl: '/login' })} title="Sair"
-                className="rounded-lg p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground">
+                className="rounded-lg p-1.5 text-white/30 hover:bg-white/[0.06] hover:text-white transition-colors">
                 <LogOut className="h-3.5 w-3.5" />
               </button>
             </>
@@ -135,7 +135,7 @@ export function ClientSidebar() {
         </div>
         {collapsed && (
           <button onClick={() => signOut({ callbackUrl: '/login' })}
-            className="group relative mt-1 flex w-full items-center justify-center rounded-xl p-2 text-muted-foreground hover:bg-accent hover:text-foreground">
+            className="group relative mt-1 flex w-full items-center justify-center rounded-xl p-2 text-white/30 hover:bg-white/[0.06] hover:text-white transition-colors">
             <LogOut className="h-4 w-4" />
             <Tooltip label="Sair" show={collapsed} />
           </button>
