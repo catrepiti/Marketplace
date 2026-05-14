@@ -1,4 +1,7 @@
 import { NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 import { getOrders } from '@/lib/mock/store'
 import { Marketplace, OrderStatus } from '@/lib/types'
 
@@ -12,6 +15,25 @@ export async function GET(request: Request) {
   const period = parseInt(searchParams.get('period') || '30')
   const page = parseInt(searchParams.get('page') || '1')
   const limit = parseInt(searchParams.get('limit') || '25')
+
+  const session = await getServerSession(authOptions)
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const hasData = await prisma.marketplaceAccount.count() > 0
+  if (!hasData) {
+    return NextResponse.json({
+      data: [],
+      total: 0,
+      page: 1,
+      limit,
+      totalRevenue: 0,
+      prevRevenue: 0,
+      totalOrders: 0,
+      prevOrders: 0,
+      avgTicket: 0,
+      prevAvgTicket: 0,
+    })
+  }
 
   const allOrders = getOrders()
 

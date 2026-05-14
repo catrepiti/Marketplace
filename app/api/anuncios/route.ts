@@ -203,6 +203,20 @@ export async function GET(request: Request) {
   const session = await getServerSession(authOptions)
   if (!session) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
 
+  const hasData = await prisma.marketplaceAccount.count() > 0
+  if (!hasData) {
+    const emptyMetrics = {
+      totalSpend: 0, totalImpressions: 0, totalClicks: 0,
+      totalConversions: 0, totalRevenue: 0, totalSalesRevenue: 0,
+      ctr: 0, cpc: 0, roas: 0, acos: 0, tacos: 0,
+      prevPeriod: { totalSpend: 0, totalClicks: 0, totalConversions: 0, roas: 0, acos: 0, tacos: 0 },
+      byMarketplace: [],
+      spendByDay: [],
+      campaigns: [],
+    }
+    return NextResponse.json(emptyMetrics)
+  }
+
   const { searchParams } = new URL(request.url)
   const period      = parseInt(searchParams.get('period') ?? '30')
   const marketplace = searchParams.get('marketplace') ?? undefined

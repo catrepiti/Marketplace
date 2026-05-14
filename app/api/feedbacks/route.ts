@@ -1,4 +1,7 @@
 import { NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 import { getFeedbacks, updateFeedbackReply } from '@/lib/mock/store'
 import { FeedbackStats, Marketplace } from '@/lib/types'
 import { MARKETPLACE_KEYS } from '@/lib/marketplaces'
@@ -13,6 +16,27 @@ export async function GET(request: Request) {
   const search = searchParams.get('search')?.toLowerCase()
   const page = parseInt(searchParams.get('page') || '1')
   const limit = parseInt(searchParams.get('limit') || '20')
+
+  const session = await getServerSession(authOptions)
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const hasData = await prisma.marketplaceAccount.count() > 0
+  if (!hasData) {
+    return NextResponse.json({
+      data: [],
+      total: 0,
+      page: 1,
+      limit,
+      stats: {
+        total: 0,
+        pending: 0,
+        replied: 0,
+        averageRating: 0,
+        byRating: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+        byMarketplace: [],
+      },
+    })
+  }
 
   let feedbacks = getFeedbacks()
 

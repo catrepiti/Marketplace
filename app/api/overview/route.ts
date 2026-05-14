@@ -28,6 +28,13 @@ export async function GET() {
     return generateClientOverview(c.id, c.name, c.slug, activeMarketplaces)
   })
 
+  if (clients.length === 0) {
+    return NextResponse.json({
+      clients: [],
+      totals: { clients: 0, gmv: 0, orders: 0, adSpend: 0, products: 0, avgRoas: 0 },
+    })
+  }
+
   const totals = {
     clients: clients.length,
     gmv: clients.reduce((s, c) => s + c.gmv, 0),
