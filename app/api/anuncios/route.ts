@@ -203,7 +203,7 @@ export async function GET(request: Request) {
   const session = await getServerSession(authOptions)
   if (!session) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
 
-  const hasData = await prisma.marketplaceAccount.count() > 0
+  const hasData = await prisma.marketplaceAccount.count({ where: { accessToken: { not: null } } }) > 0
   if (!hasData) {
     const emptyMetrics = {
       totalSpend: 0, totalImpressions: 0, totalClicks: 0,

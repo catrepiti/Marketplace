@@ -10,7 +10,7 @@ export async function GET(req: Request) {
   const session = await getServerSession(authOptions)
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const hasData = await prisma.marketplaceAccount.count() > 0
+  const hasData = await prisma.marketplaceAccount.count({ where: { accessToken: { not: null } } }) > 0
   if (!hasData) {
     return NextResponse.json({
       items: [],
