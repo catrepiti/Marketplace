@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { prisma } from '@/lib/prisma'
 

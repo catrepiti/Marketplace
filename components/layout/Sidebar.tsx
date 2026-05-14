@@ -14,13 +14,13 @@ import { ROLE_LABELS, Role } from '@/lib/session'
 import { useState, useEffect } from 'react'
 
 const teamNav = [
-  { href: '/visao-geral',  icon: LayoutGrid,   label: 'Visão Geral',  roles: ['ADMIN', 'TRAFFIC_MANAGER', 'PROJECT_MANAGER'] },
-  { href: '/vendas',       icon: ShoppingCart, label: 'Vendas',       roles: ['ADMIN', 'TRAFFIC_MANAGER'] },
-  { href: '/feedbacks',    icon: MessageSquare,label: 'Feedbacks',    roles: ['ADMIN', 'PROJECT_MANAGER'] },
-  { href: '/anuncios',     icon: Megaphone,    label: 'Anúncios',     roles: ['ADMIN', 'TRAFFIC_MANAGER'] },
-  { href: '/concorrencia', icon: Swords,       label: 'Concorrência', roles: ['ADMIN', 'TRAFFIC_MANAGER', 'PROJECT_MANAGER'] },
-  { href: '/estoque',      icon: Boxes,        label: 'Estoque',      roles: ['ADMIN', 'TRAFFIC_MANAGER', 'PROJECT_MANAGER'] },
-  { href: '/minha-conta', icon: UserCog,      label: 'Minha Conta',  roles: ['ADMIN', 'TRAFFIC_MANAGER', 'PROJECT_MANAGER', 'CLIENT'] },
+  { href: '/visao-geral',  icon: LayoutGrid,   label: 'Visão Geral',  roles: ['ADMIN', 'TRAFFIC_MANAGER', 'PROJECT_MANAGER', 'CLIENT'] },
+  { href: '/vendas',       icon: ShoppingCart, label: 'Vendas',       roles: ['ADMIN', 'TRAFFIC_MANAGER', 'CLIENT'] },
+  { href: '/feedbacks',    icon: MessageSquare,label: 'Feedbacks',    roles: ['ADMIN', 'PROJECT_MANAGER', 'CLIENT'] },
+  { href: '/anuncios',     icon: Megaphone,    label: 'Anúncios',     roles: ['ADMIN', 'TRAFFIC_MANAGER', 'CLIENT'] },
+  { href: '/concorrencia', icon: Swords,       label: 'Concorrência', roles: ['ADMIN', 'TRAFFIC_MANAGER', 'PROJECT_MANAGER', 'CLIENT'] },
+  { href: '/estoque',      icon: Boxes,        label: 'Estoque',      roles: ['ADMIN', 'TRAFFIC_MANAGER', 'PROJECT_MANAGER', 'CLIENT'] },
+  { href: '/minha-conta',  icon: UserCog,      label: 'Minha Conta',  roles: ['ADMIN', 'TRAFFIC_MANAGER', 'PROJECT_MANAGER', 'CLIENT'] },
 ]
 
 const adminNav = [

@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState, useMemo, useRef } from 'react'
+import { useSession } from 'next-auth/react'
 import {
   Search, SlidersHorizontal, Calendar, AlertTriangle, X,
   Tag, ExternalLink, ChevronRight, TrendingUp, TrendingDown,
@@ -115,9 +116,14 @@ function TrendBadge({ value }: { value: number }) {
 
 // ── Page ───────────────────────────────────────────────────────────────────────
 export default function VisaoGeralPage() {
+  const { data: session } = useSession()
+  const role = (session?.user as any)?.role
+  const myClientId = (session?.user as any)?.clientId
+
   const [data, setData]               = useState<OverviewData | null>(null)
   const [loading, setLoading]         = useState(true)
   const [search, setSearch]           = useState('')
+  const [clientAutoFiltered, setClientAutoFiltered] = useState(false)
   const [alertDismissed, setAlertDismissed] = useState(false)
 
   // Date range
@@ -146,6 +152,15 @@ export default function VisaoGeralPage() {
       .catch(() => setLoading(false))
   }, [])
 
+  // Auto-filter for CLIENT role
+  useEffect(() => {
+    if (!data || clientAutoFiltered) return
+    if (role === 'CLIENT' && myClientId) {
+      setSearch('')
+      setClientAutoFiltered(true)
+    }
+  }, [data, session, role, myClientId, clientAutoFiltered])
+
   // Close panels on outside click
   useEffect(() => {
     function handler(e: MouseEvent) {
@@ -163,7 +178,11 @@ export default function VisaoGeralPage() {
   // Per-client filtered metrics (recalculated on every date change)
   const clientsWithFiltered = useMemo(() => {
     if (!data?.clients) return []
-    return data.clients.map(c => {
+    // CLIENT role: only show their own store
+    const source = (role === 'CLIENT' && myClientId)
+      ? data.clients.filter(c => c.id === myClientId)
+      : data.clients
+    return source.map(c => {
       const days        = c.revenueByDay.filter(d => d.date >= dateFrom && d.date <= dateTo)
       const filteredGmv = days.reduce((s, d) => s + d.revenue, 0)
       const ratio       = c.gmv > 0 ? filteredGmv / c.gmv : 0
@@ -174,7 +193,7 @@ export default function VisaoGeralPage() {
       const filteredConvCusto = filteredOrders / Math.max(filteredAdSpend / 1000, 0.01)
       return { ...c, filteredGmv, filteredAdSpend, filteredOrders, filteredRoas, filteredPct, filteredConvCusto }
     })
-  }, [data, dateFrom, dateTo])
+  }, [data, dateFrom, dateTo, role, myClientId])
 
   // Sort/filter clients using filtered values
   const sorted = useMemo(() => {
@@ -294,11 +313,15 @@ export default function VisaoGeralPage() {
         </div>
       )}
 
-      <Header title="Visão Geral" subtitle="Todos os clientes da plataforma" />
+      <Header
+        title={role === 'CLIENT' ? 'Minha Loja' : 'Visão Geral'}
+        subtitle={role === 'CLIENT' ? 'Seus dados de performance' : 'Todos os clientes da plataforma'}
+      />
 
       <div className="flex-1 p-6 space-y-5">
 
         {/* ── Filter bar ── */}
+        {role !== 'CLIENT' && (
         <div className="flex items-center gap-3 flex-wrap">
 
           {/* Search */}
@@ -465,6 +488,7 @@ export default function VisaoGeralPage() {
             )}
           </div>
         </div>
+        )}
 
         {/* ── 4 KPI cards with sparklines ── */}
         <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
