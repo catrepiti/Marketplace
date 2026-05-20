@@ -141,6 +141,27 @@ export default function ClientDetailPage() {
   const [adsFilter, setAdsFilter] = useState<string>('all')
   const adsMock = client ? generateAdsMock(client.id) : null
 
+  const [mlConnecting, setMlConnecting] = useState(false)
+  const [mlBanner, setMlBanner] = useState<{ ok: boolean; text: string } | null>(() => {
+    if (typeof window === 'undefined') return null
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('ml_connected')) return { ok: true, text: 'Mercado Livre conectado com sucesso!' }
+    if (params.get('ml_error')) return { ok: false, text: `Erro ao conectar: ${params.get('ml_error')}` }
+    return null
+  })
+
+  const handleMlConnect = async () => {
+    setMlConnecting(true)
+    try {
+      const res = await fetch(`/api/admin/clients/${id}/ml-connect`, { method: 'POST' })
+      const data = await res.json()
+      if (data.url) window.open(data.url, '_blank')
+      else alert(data.error ?? 'Erro ao gerar URL de conexão')
+    } finally {
+      setMlConnecting(false)
+    }
+  }
+
   // ── WhatsApp notifications state ────────────────────────────────────────────
   const [notifConfig, setNotifConfig] = useState<any>(null)
   const [notifLogs, setNotifLogs]     = useState<any[]>([])
@@ -331,6 +352,24 @@ export default function ClientDetailPage() {
       />
 
       <div className="flex-1 overflow-y-auto p-6 space-y-5">
+        {/* ML OAuth banner */}
+        {mlBanner && (
+          <div className={cn(
+            'flex items-center justify-between gap-3 rounded-lg border px-4 py-3 text-sm font-medium',
+            mlBanner.ok
+              ? 'border-green-500/30 bg-green-500/10 text-green-600'
+              : 'border-destructive/30 bg-destructive/10 text-destructive'
+          )}>
+            <span className="flex items-center gap-2">
+              {mlBanner.ok ? <CheckCircle2 className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
+              {mlBanner.text}
+            </span>
+            <button onClick={() => setMlBanner(null)} className="opacity-60 hover:opacity-100">
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        )}
+
         {/* Tabs */}
         <div className="flex gap-1 border-b border-border">
           {tabs.map(t => (
@@ -505,6 +544,17 @@ export default function ClientDetailPage() {
                         {generatingInvite[mp] ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Link2 className="h-3.5 w-3.5" />}
                         Gerar link de acesso
                       </Button>
+                      {mp === 'MERCADOLIVRE' && (
+                        <button
+                          type="button"
+                          onClick={handleMlConnect}
+                          disabled={mlConnecting || !getMpForm('MERCADOLIVRE').appId}
+                          className="flex items-center gap-2 rounded-lg bg-yellow-400/10 border border-yellow-400/20 px-3 py-1.5 text-xs font-semibold text-yellow-400 hover:bg-yellow-400/20 transition-colors disabled:opacity-40"
+                        >
+                          {mlConnecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5" />}
+                          {mlConnecting ? 'Aguarde...' : 'Autorizar com Mercado Livre'}
+                        </button>
+                      )}
                       {msg?.text && (
                         <span className={cn('flex items-center gap-1 text-xs font-medium', msg.ok ? 'text-green-600' : 'text-destructive')}>
                           {msg.ok ? <CheckCircle2 className="h-3.5 w-3.5" /> : <XCircle className="h-3.5 w-3.5" />}
