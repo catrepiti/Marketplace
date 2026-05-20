@@ -141,24 +141,41 @@ export default function ClientDetailPage() {
   const [adsFilter, setAdsFilter] = useState<string>('all')
   const adsMock = client ? generateAdsMock(client.id) : null
 
-  const [mlConnecting, setMlConnecting] = useState(false)
+  const [mlConnecting, setMlConnecting]   = useState(false)
+  const [mlTesting, setMlTesting]         = useState(false)
+  const [mlTestResult, setMlTestResult]   = useState<any>(null)
+  const [mlRedirectUri, setMlRedirectUri] = useState<string>('')
   const [mlBanner, setMlBanner] = useState<{ ok: boolean; text: string } | null>(() => {
     if (typeof window === 'undefined') return null
     const params = new URLSearchParams(window.location.search)
-    if (params.get('ml_connected')) return { ok: true, text: 'Mercado Livre conectado com sucesso!' }
-    if (params.get('ml_error')) return { ok: false, text: `Erro ao conectar: ${params.get('ml_error')}` }
+    if (params.get('ml_connected')) return { ok: true, text: '✅ Mercado Livre conectado com sucesso!' }
+    if (params.get('ml_error'))     return { ok: false, text: `❌ ${decodeURIComponent(params.get('ml_error') ?? '')}` }
     return null
   })
 
   const handleMlConnect = async () => {
     setMlConnecting(true)
+    setMlTestResult(null)
     try {
-      const res = await fetch(`/api/admin/clients/${id}/ml-connect`, { method: 'POST' })
+      const res  = await fetch(`/api/admin/clients/${id}/ml-connect`, { method: 'POST' })
       const data = await res.json()
-      if (data.url) window.open(data.url, '_blank')
-      else alert(data.error ?? 'Erro ao gerar URL de conexão')
+      if (!res.ok) { alert(data.error ?? 'Erro ao gerar URL'); return }
+      setMlRedirectUri(data.redirectUri ?? '')
+      window.open(data.url, '_blank', 'width=600,height=700')
     } finally {
       setMlConnecting(false)
+    }
+  }
+
+  const handleMlTest = async () => {
+    setMlTesting(true)
+    setMlTestResult(null)
+    try {
+      const res  = await fetch(`/api/admin/clients/${id}/ml-test`)
+      const data = await res.json()
+      setMlTestResult(data)
+    } finally {
+      setMlTesting(false)
     }
   }
 
@@ -517,27 +534,68 @@ export default function ClientDetailPage() {
                         </div>
 
                         {/* Step 2 — OAuth authorization */}
-                        <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/5 p-4">
-                          <p className="text-[11px] font-semibold uppercase tracking-widest text-yellow-400/80 mb-1">
+                        <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/5 p-4 space-y-3">
+                          <p className="text-[11px] font-semibold uppercase tracking-widest text-yellow-400/80">
                             Passo 2 — Autorizar acesso
                           </p>
-                          <p className="text-xs text-muted-foreground mb-3">
-                            {isConnected
-                              ? 'Conta autorizada. Clique para reautorizar se necessário.'
-                              : 'Salve as credenciais acima e clique para conectar a conta do vendedor.'}
-                          </p>
-                          <button
-                            type="button"
-                            onClick={handleMlConnect}
-                            disabled={mlConnecting || !form.appId || !form.appSecret}
-                            className="flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-xs font-bold text-black hover:bg-yellow-300 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                          >
-                            {mlConnecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5" />}
-                            {mlConnecting ? 'Aguarde...' : isConnected ? '🔄 Reautorizar com Mercado Livre' : '🔗 Autorizar com Mercado Livre'}
-                          </button>
-                          {isConnected && (
-                            <p className="mt-2 text-[11px] text-green-500 flex items-center gap-1">
-                              <CheckCircle2 className="h-3 w-3" /> Seller ID: {existing?.sellerId} · Token ativo
+
+                          {/* Redirect URI to confirm in ML portal */}
+                          <div className="rounded-lg bg-black/20 border border-white/[0.06] px-3 py-2">
+                            <p className="text-[10px] text-white/40 mb-0.5">URL de redirecionamento — cadastre exatamente essa no portal ML:</p>
+                            <p className="text-[11px] font-mono text-yellow-300 select-all break-all">
+                              {(process.env.NEXT_PUBLIC_URL ?? 'https://merly.com.br')}/api/auth/ml/callback
+                            </p>
+                          </div>
+
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <button
+                              type="button"
+                              onClick={handleMlConnect}
+                              disabled={mlConnecting || !form.appId || !form.appSecret}
+                              className="flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-xs font-bold text-black hover:bg-yellow-300 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                            >
+                              {mlConnecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5" />}
+                              {mlConnecting ? 'Aguarde...' : isConnected ? '🔄 Reautorizar' : '🔗 Autorizar com Mercado Livre'}
+                            </button>
+
+                            {isConnected && (
+                              <button
+                                type="button"
+                                onClick={handleMlTest}
+                                disabled={mlTesting}
+                                className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs font-semibold text-emerald-400 hover:bg-emerald-500/20 transition-colors disabled:opacity-40"
+                              >
+                                {mlTesting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
+                                Testar conexão
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Test result */}
+                          {mlTestResult && (
+                            <div className={cn('rounded-lg border p-3 text-xs space-y-1',
+                              mlTestResult.ok ? 'border-emerald-500/20 bg-emerald-500/5' : 'border-red-500/20 bg-red-500/5'
+                            )}>
+                              {mlTestResult.ok ? (
+                                <>
+                                  <p className="font-semibold text-emerald-400">✅ Conexão OK!</p>
+                                  <p className="text-white/60">Conta: <strong className="text-white">{mlTestResult.mlUser?.nickname}</strong> (ID: {mlTestResult.mlUser?.id})</p>
+                                  <p className="text-white/60">Pedidos (7 dias): <strong className="text-white">{mlTestResult.ordersTest}</strong></p>
+                                </>
+                              ) : (
+                                <>
+                                  <p className="font-semibold text-red-400">❌ Falha na conexão</p>
+                                  <p className="text-white/60">Etapa: <strong className="text-white">{mlTestResult.step}</strong></p>
+                                  {mlTestResult.mlError && <p className="text-red-300 font-mono text-[10px]">{JSON.stringify(mlTestResult.mlError)}</p>}
+                                  {mlTestResult.error && <p className="text-red-300 text-[10px]">{mlTestResult.error}</p>}
+                                </>
+                              )}
+                            </div>
+                          )}
+
+                          {isConnected && !mlTestResult && (
+                            <p className="text-[11px] text-green-500 flex items-center gap-1">
+                              <CheckCircle2 className="h-3 w-3" /> Seller ID: {existing?.sellerId} · Token salvo
                             </p>
                           )}
                         </div>
