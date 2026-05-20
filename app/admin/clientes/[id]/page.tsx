@@ -469,102 +469,135 @@ export default function ClientDetailPage() {
                     )}
                   </div>
 
-                  {/* Basic fields */}
-                  <CardContent className="pt-4 pb-4">
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                      {cfg.basic.map(field => (
-                        <div key={field.key}>
-                          <label className="text-xs font-medium text-muted-foreground mb-1 block">{field.label}</label>
-                          <div className="relative">
-                            <Input
-                              type={field.secret && !showSecret[`${mp}_${field.key}`] ? 'password' : 'text'}
-                              value={form[field.key] ?? ''}
-                              onChange={e => setMpField(mp, field.key, e.target.value)}
-                              placeholder={field.placeholder}
-                              className="text-xs pr-8"
-                            />
-                            {field.secret && (
-                              <button
-                                type="button"
-                                onClick={() => setShowSecret(p => ({ ...p, [`${mp}_${field.key}`]: !p[`${mp}_${field.key}`] }))}
-                                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                              >
-                                {showSecret[`${mp}_${field.key}`] ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                  {/* Fields */}
+                  <CardContent className="pt-4 pb-4 space-y-4">
 
-                    {/* Advanced toggle */}
-                    <button
-                      onClick={() => setShowAdvanced(p => ({ ...p, [mp]: !p[mp] }))}
-                      className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', advOpen && 'rotate-180')} />
-                      {advOpen ? 'Ocultar' : 'Mostrar'} configurações avançadas (OAuth)
-                    </button>
-
-                    {advOpen && (
-                      <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3 rounded-xl border border-border bg-muted/20 p-3">
-                        {cfg.advanced.map(field => (
-                          <div key={field.key}>
-                            <label className="text-xs font-medium text-muted-foreground mb-1 block">{field.label}</label>
-                            <div className="relative">
-                              <Input
-                                type={field.secret && !showSecret[`${mp}_${field.key}`] ? 'password' : 'text'}
-                                value={form[field.key] ?? ''}
-                                onChange={e => setMpField(mp, field.key, e.target.value)}
-                                placeholder={field.placeholder}
-                                className="text-xs pr-8 bg-background"
-                              />
-                              {field.secret && (
-                                <button
-                                  type="button"
-                                  onClick={() => setShowSecret(p => ({ ...p, [`${mp}_${field.key}`]: !p[`${mp}_${field.key}`] }))}
-                                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                                >
-                                  {showSecret[`${mp}_${field.key}`] ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                    {/* ML OAuth flow — simplified 2-step UI */}
+                    {mp === 'MERCADOLIVRE' ? (
+                      <>
+                        {/* Step 1 — App credentials */}
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-2">
+                            Passo 1 — Credenciais do App
+                            <a href="https://developers.mercadolivre.com.br" target="_blank" rel="noopener noreferrer" className="ml-2 normal-case font-normal text-primary hover:underline">
+                              Onde encontrar →
+                            </a>
+                          </p>
+                          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                            <div>
+                              <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                                App ID <span className="text-[10px] opacity-60">(Client ID do seu app ML)</span>
+                              </label>
+                              <Input value={form.appId ?? ''} onChange={e => setMpField(mp, 'appId', e.target.value)}
+                                placeholder="Ex: 6521451414089730" className="text-xs font-mono" />
+                            </div>
+                            <div>
+                              <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                                App Secret <span className="text-[10px] opacity-60">(Client Secret — NÃO é o Seller ID)</span>
+                              </label>
+                              <div className="relative">
+                                <Input
+                                  type={showSecret[`${mp}_appSecret`] ? 'text' : 'password'}
+                                  value={form.appSecret ?? ''}
+                                  onChange={e => setMpField(mp, 'appSecret', e.target.value)}
+                                  placeholder="Hash longo gerado no portal ML"
+                                  className="text-xs pr-8 font-mono"
+                                />
+                                <button type="button" onClick={() => setShowSecret(p => ({ ...p, [`${mp}_appSecret`]: !p[`${mp}_appSecret`] }))}
+                                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                                  {showSecret[`${mp}_appSecret`] ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
                                 </button>
-                              )}
+                              </div>
                             </div>
                           </div>
-                        ))}
-                      </div>
+                          <Button size="sm" className="mt-3" onClick={() => saveMp(mp)} disabled={mpSaving[mp]}>
+                            {mpSaving[mp] ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
+                            Salvar credenciais
+                          </Button>
+                        </div>
+
+                        {/* Step 2 — OAuth authorization */}
+                        <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/5 p-4">
+                          <p className="text-[11px] font-semibold uppercase tracking-widest text-yellow-400/80 mb-1">
+                            Passo 2 — Autorizar acesso
+                          </p>
+                          <p className="text-xs text-muted-foreground mb-3">
+                            {isConnected
+                              ? 'Conta autorizada. Clique para reautorizar se necessário.'
+                              : 'Salve as credenciais acima e clique para conectar a conta do vendedor.'}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={handleMlConnect}
+                            disabled={mlConnecting || !form.appId || !form.appSecret}
+                            className="flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-xs font-bold text-black hover:bg-yellow-300 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                          >
+                            {mlConnecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5" />}
+                            {mlConnecting ? 'Aguarde...' : isConnected ? '🔄 Reautorizar com Mercado Livre' : '🔗 Autorizar com Mercado Livre'}
+                          </button>
+                          {isConnected && (
+                            <p className="mt-2 text-[11px] text-green-500 flex items-center gap-1">
+                              <CheckCircle2 className="h-3 w-3" /> Seller ID: {existing?.sellerId} · Token ativo
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Nome da conta (optional) */}
+                        <div>
+                          <label className="text-xs font-medium text-muted-foreground mb-1 block">Nome da conta <span className="text-[10px] opacity-60">(opcional)</span></label>
+                          <Input value={form.accountName ?? ''} onChange={e => setMpField(mp, 'accountName', e.target.value)}
+                            placeholder="Ex: Passo Compasso" className="text-xs max-w-xs" />
+                        </div>
+                      </>
+                    ) : (
+                      /* Other marketplaces — original form */
+                      <>
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                          {cfg.basic.map(field => (
+                            <div key={field.key}>
+                              <label className="text-xs font-medium text-muted-foreground mb-1 block">{field.label}</label>
+                              <div className="relative">
+                                <Input
+                                  type={field.secret && !showSecret[`${mp}_${field.key}`] ? 'password' : 'text'}
+                                  value={form[field.key as keyof typeof form] ?? ''}
+                                  onChange={e => setMpField(mp, field.key, e.target.value)}
+                                  placeholder={field.placeholder}
+                                  className="text-xs pr-8"
+                                />
+                                {field.secret && (
+                                  <button type="button" onClick={() => setShowSecret(p => ({ ...p, [`${mp}_${field.key}`]: !p[`${mp}_${field.key}`] }))}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                                    {showSecret[`${mp}_${field.key}`] ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <Button size="sm" onClick={() => saveMp(mp)} disabled={mpSaving[mp]}>
+                            {mpSaving[mp] ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
+                            {isConnected ? 'Salvar alterações' : 'Conectar'}
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => generateInvite(mp)} disabled={generatingInvite[mp]}>
+                            {generatingInvite[mp] ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Link2 className="h-3.5 w-3.5" />}
+                            Gerar link de acesso
+                          </Button>
+                        </div>
+                      </>
                     )}
 
-                    {/* Actions */}
-                    <div className="mt-4 flex items-center gap-3 flex-wrap">
-                      <Button size="sm" onClick={() => saveMp(mp)} disabled={mpSaving[mp]}>
-                        {mpSaving[mp] ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
-                        {isConnected ? 'Salvar alterações' : 'Conectar'}
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={() => generateInvite(mp)} disabled={generatingInvite[mp]}>
-                        {generatingInvite[mp] ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Link2 className="h-3.5 w-3.5" />}
-                        Gerar link de acesso
-                      </Button>
-                      {mp === 'MERCADOLIVRE' && (
-                        <button
-                          type="button"
-                          onClick={handleMlConnect}
-                          disabled={mlConnecting || !getMpForm('MERCADOLIVRE').appId}
-                          className="flex items-center gap-2 rounded-lg bg-yellow-400/10 border border-yellow-400/20 px-3 py-1.5 text-xs font-semibold text-yellow-400 hover:bg-yellow-400/20 transition-colors disabled:opacity-40"
-                        >
-                          {mlConnecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5" />}
-                          {mlConnecting ? 'Aguarde...' : 'Autorizar com Mercado Livre'}
-                        </button>
-                      )}
-                      {msg?.text && (
-                        <span className={cn('flex items-center gap-1 text-xs font-medium', msg.ok ? 'text-green-600' : 'text-destructive')}>
-                          {msg.ok ? <CheckCircle2 className="h-3.5 w-3.5" /> : <XCircle className="h-3.5 w-3.5" />}
-                          {msg.text}
-                        </span>
-                      )}
-                      <a href={cfg.docsUrl} target="_blank" rel="noopener noreferrer" className="ml-auto flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors">
+                    {msg?.text && (
+                      <span className={cn('flex items-center gap-1 text-xs font-medium', msg.ok ? 'text-green-600' : 'text-destructive')}>
+                        {msg.ok ? <CheckCircle2 className="h-3.5 w-3.5" /> : <XCircle className="h-3.5 w-3.5" />}
+                        {msg.text}
+                      </span>
+                    )}
+                    {mp !== 'MERCADOLIVRE' && (
+                      <a href={cfg.docsUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors w-fit">
                         <ExternalLink className="h-3 w-3" /> Docs da API
                       </a>
-                    </div>
+                    )}
                   </CardContent>
                 </Card>
               )
