@@ -12,8 +12,7 @@ import { cn } from '@/lib/utils'
 
 const roleColors: Record<string, string> = {
   ADMIN: 'bg-purple-100 text-purple-700',
-  TRAFFIC_MANAGER: 'bg-blue-100 text-blue-700',
-  PROJECT_MANAGER: 'bg-green-100 text-green-700',
+  ASSESSOR: 'bg-blue-100 text-blue-700',
   CLIENT: 'bg-gray-100 text-gray-700',
 }
 
@@ -114,8 +113,7 @@ export default function UsuariosPage() {
                   <label className="text-xs font-medium mb-1 block">Role *</label>
                   <Select value={form.role} onChange={e => setForm(f => ({ ...f, role: e.target.value }))} options={[
                     { value: 'ADMIN', label: 'Administrador' },
-                    { value: 'TRAFFIC_MANAGER', label: 'Gestor de Tráfego' },
-                    { value: 'PROJECT_MANAGER', label: 'Gestor de Projetos' },
+                    { value: 'ASSESSOR', label: 'Assessoria' },
                     { value: 'CLIENT', label: 'Cliente' },
                   ]} />
                 </div>

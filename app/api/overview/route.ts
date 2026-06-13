@@ -115,7 +115,7 @@ export async function GET() {
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const role = (session.user as any)?.role
-  if (!['ADMIN', 'TRAFFIC_MANAGER', 'PROJECT_MANAGER'].includes(role)) {
+  if (!['ADMIN', 'ASSESSOR'].includes(role)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 

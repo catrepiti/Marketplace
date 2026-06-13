@@ -1,26 +1,24 @@
 'use client'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import { MARKETPLACE_LIST } from '@/lib/marketplaces'
 import {
   ShoppingCart, MessageSquare, Megaphone,
   Users, Building2, LogOut, ChevronDown,
   PanelLeftClose, PanelLeftOpen, ChevronRight, LayoutGrid,
-  Swords, Boxes, UserCog, Crown, Upload,
+  UserCog, Crown, Upload,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ROLE_LABELS, Role } from '@/lib/session'
 import { useState, useEffect } from 'react'
 
-const teamNav = [
-  { href: '/visao-geral',  icon: LayoutGrid,   label: 'Visão Geral',  roles: ['ADMIN', 'TRAFFIC_MANAGER', 'PROJECT_MANAGER', 'CLIENT'] },
-  { href: '/vendas',       icon: ShoppingCart, label: 'Vendas',       roles: ['ADMIN', 'TRAFFIC_MANAGER', 'CLIENT'] },
-  { href: '/feedbacks',    icon: MessageSquare,label: 'Feedbacks',    roles: ['ADMIN', 'PROJECT_MANAGER', 'CLIENT'] },
-  { href: '/anuncios',     icon: Megaphone,    label: 'Anúncios',     roles: ['ADMIN', 'TRAFFIC_MANAGER', 'CLIENT'] },
-  { href: '/concorrencia', icon: Swords,       label: 'Concorrência', roles: ['ADMIN', 'TRAFFIC_MANAGER', 'PROJECT_MANAGER', 'CLIENT'] },
-  { href: '/estoque',      icon: Boxes,        label: 'Estoque',      roles: ['ADMIN', 'TRAFFIC_MANAGER', 'PROJECT_MANAGER', 'CLIENT'] },
-  { href: '/minha-conta',  icon: UserCog,      label: 'Minha Conta',  roles: ['ADMIN', 'TRAFFIC_MANAGER', 'PROJECT_MANAGER', 'CLIENT'] },
+const mainNav = [
+  { href: '/visao-geral', icon: LayoutGrid,    label: 'Visão Geral',  roles: ['ADMIN', 'ASSESSOR', 'CLIENT'] },
+  { href: '/vendas',      icon: ShoppingCart,   label: 'Vendas',       roles: ['ADMIN', 'ASSESSOR', 'CLIENT'] },
+  { href: '/feedbacks',   icon: MessageSquare,  label: 'Avaliações',   roles: ['ADMIN', 'ASSESSOR', 'CLIENT'] },
+  { href: '/anuncios',    icon: Megaphone,      label: 'Anúncios',     roles: ['ADMIN', 'ASSESSOR', 'CLIENT'] },
+  { href: '/minha-conta', icon: UserCog,        label: 'Meu Perfil',   roles: ['ADMIN', 'ASSESSOR', 'CLIENT'] },
 ]
 
 const adminNav = [
@@ -92,10 +90,9 @@ export function Sidebar({ clients = [], selectedClientId, onClientChange }: Side
     if (next) setClientOpen(false)
   }
 
-  const visibleNav   = teamNav.filter(item => !role || item.roles.includes(role))
+  const visibleNav   = mainNav.filter(item => !role || item.roles.includes(role))
   const selectedClient = clients.find(c => c.id === selectedClientId)
 
-  // Avoid layout flash before localStorage is read
   const width = mounted ? (collapsed ? 64 : 240) : 240
 
   return (
@@ -103,7 +100,6 @@ export function Sidebar({ clients = [], selectedClientId, onClientChange }: Side
       style={{ width }}
       className="fixed inset-y-0 left-0 z-40 flex flex-col border-r border-white/[0.06] bg-[#07090f] sidebar-transition overflow-hidden"
     >
-      {/* Subtle top glow */}
       <div className="pointer-events-none absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-primary/10 to-transparent" />
 
       {/* ── Logo + toggle ── */}
@@ -143,7 +139,6 @@ export function Sidebar({ clients = [], selectedClientId, onClientChange }: Side
 
       <div className="flex-1 overflow-y-auto overflow-x-hidden py-3 space-y-1 px-2">
 
-        {/* ── Expand button when collapsed ── */}
         {collapsed && (
           <button
             onClick={toggle}
@@ -154,8 +149,8 @@ export function Sidebar({ clients = [], selectedClientId, onClientChange }: Side
           </button>
         )}
 
-        {/* ── Client filter ── */}
-        {!collapsed && clients.length > 0 && onClientChange && (
+        {/* ── Client filter (assessor/admin only, multi-client) ── */}
+        {!collapsed && clients.length > 1 && onClientChange && role !== 'CLIENT' && (
           <div className="mb-2 px-1">
             <p className="mb-1.5 px-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">
               Cliente
@@ -169,7 +164,7 @@ export function Sidebar({ clients = [], selectedClientId, onClientChange }: Side
                 <ChevronDown className={cn('h-3.5 w-3.5 text-muted-foreground shrink-0 transition-transform duration-200', clientOpen && 'rotate-180')} />
               </button>
               {clientOpen && (
-                <div className="absolute left-0 right-0 top-full z-50 mt-1 rounded-xl border border-border bg-card shadow-lg overflow-hidden">
+                <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-48 overflow-y-auto rounded-xl border border-border bg-card shadow-lg">
                   <button
                     className={cn('flex w-full px-3 py-2 text-xs hover:bg-accent transition-colors text-left', !selectedClientId && 'bg-primary/10 text-primary font-medium')}
                     onClick={() => { onClientChange(''); setClientOpen(false) }}

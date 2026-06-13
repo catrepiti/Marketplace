@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 
-export type Role = 'ADMIN' | 'TRAFFIC_MANAGER' | 'PROJECT_MANAGER' | 'CLIENT'
+export type Role = 'ADMIN' | 'ASSESSOR' | 'CLIENT'
 
 export async function getSession() {
   return getServerSession(authOptions)
@@ -19,12 +19,11 @@ export type AppUser = {
 }
 
 export function isTeamRole(role: Role) {
-  return ['ADMIN', 'TRAFFIC_MANAGER', 'PROJECT_MANAGER'].includes(role)
+  return ['ADMIN', 'ASSESSOR'].includes(role)
 }
 
 export const ROLE_LABELS: Record<Role, string> = {
   ADMIN: 'Administrador',
-  TRAFFIC_MANAGER: 'Gestor de Tráfego',
-  PROJECT_MANAGER: 'Gestor de Projetos',
+  ASSESSOR: 'Assessoria',
   CLIENT: 'Cliente',
 }
