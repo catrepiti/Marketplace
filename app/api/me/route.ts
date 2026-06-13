@@ -22,14 +22,61 @@ export async function GET() {
         select: {
           id: true,
           name: true,
-          plan: { select: { id: true, name: true, price: true, interval: true, features: true } },
+          slug: true,
+          createdAt: true,
+          plan: { select: { id: true, name: true, price: true, interval: true, features: true, maxAccounts: true } },
+          marketplaceAccounts: {
+            select: { marketplace: true, accountName: true, status: true, accessToken: true, sellerId: true, createdAt: true },
+          },
+          _count: { select: { sales: true, users: true, documents: true } },
         },
       },
     },
   })
 
   if (!user) return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
-  return NextResponse.json(user)
+
+  const result: any = { ...user }
+
+  if (user.client) {
+    result.client = {
+      ...user.client,
+      marketplaceAccounts: user.client.marketplaceAccounts.map(a => ({
+        marketplace: a.marketplace,
+        accountName: a.accountName,
+        status: a.status,
+        connected: !!a.accessToken,
+        hasSellerId: !!a.sellerId,
+        createdAt: a.createdAt,
+      })),
+    }
+
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000)
+    const [salesStats, recentSales] = await Promise.all([
+      prisma.sale.aggregate({
+        where: { clientId: user.client.id, saleDate: { gte: thirtyDaysAgo } },
+        _sum: { totalPrice: true },
+        _count: true,
+      }),
+      prisma.sale.findMany({
+        where: { clientId: user.client.id },
+        orderBy: { saleDate: 'desc' },
+        take: 5,
+        select: { id: true, product: true, totalPrice: true, marketplace: true, saleDate: true, status: true },
+      }),
+    ])
+
+    result.stats = {
+      totalSales30d: salesStats._count ?? 0,
+      revenue30d: salesStats._sum.totalPrice ?? 0,
+      totalSalesAll: user.client._count.sales,
+      totalUsers: user.client._count.users,
+      totalDocuments: user.client._count.documents,
+    }
+    result.recentSales = recentSales
+  }
+
+  return NextResponse.json(result)
 }
 
 export async function PATCH(request: Request) {
