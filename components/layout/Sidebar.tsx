@@ -7,7 +7,7 @@ import {
   ShoppingCart, MessageSquare, Megaphone,
   Users, Building2, LogOut, ChevronDown,
   PanelLeftClose, PanelLeftOpen, ChevronRight, LayoutGrid,
-  Swords, Boxes, UserCog,
+  Swords, Boxes, UserCog, Crown, Upload,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ROLE_LABELS, Role } from '@/lib/session'
@@ -24,8 +24,10 @@ const teamNav = [
 ]
 
 const adminNav = [
-  { href: '/admin/usuarios', icon: Users,     label: 'Usuários' },
-  { href: '/admin/clientes', icon: Building2, label: 'Clientes' },
+  { href: '/admin/usuarios',      icon: Users,     label: 'Usuários' },
+  { href: '/admin/clientes',      icon: Building2, label: 'Clientes' },
+  { href: '/admin/planos',        icon: Crown,     label: 'Planos' },
+  { href: '/admin/vendas-import', icon: Upload,    label: 'Importar Vendas' },
 ]
 
 interface SidebarProps {

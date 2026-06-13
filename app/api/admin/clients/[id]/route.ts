@@ -20,6 +20,7 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
       users: { select: { id: true, name: true, email: true, role: true, createdAt: true } },
       marketplaceAccounts: true,
       documents: { orderBy: { createdAt: 'desc' } },
+      plan: true,
     },
   })
 
@@ -31,13 +32,17 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   if (!await requireAdmin()) return NextResponse.json({ error: 'Não autorizado' }, { status: 403 })
 
   const body = await request.json()
-  const { name, slug } = body
+  const { name, slug, planId } = body
 
-  if (!name || !slug) return NextResponse.json({ error: 'Nome e slug obrigatórios' }, { status: 400 })
+  const data: any = {}
+  if (name) data.name = name
+  if (slug) data.slug = slug
+  if (planId !== undefined) data.planId = planId || null
 
   const client = await prisma.client.update({
     where: { id: params.id },
-    data: { name, slug },
+    data,
+    include: { plan: true },
   })
   return NextResponse.json(client)
 }
