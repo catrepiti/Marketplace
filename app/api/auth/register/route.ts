@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma'
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { name, email, password } = body
+    const { name, email, password, planId } = body
 
     if (!name?.trim() || !email?.trim() || !password) {
       return NextResponse.json({ error: 'Todos os campos são obrigatórios.' }, { status: 400 })
@@ -25,7 +25,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Este email já está cadastrado.' }, { status: 400 })
     }
 
+    let plan = null
+    if (planId) {
+      plan = await prisma.plan.findUnique({ where: { id: planId } })
+    }
+    if (!plan) {
+      plan = await prisma.plan.findFirst({ where: { active: true }, orderBy: { sortOrder: 'asc' } })
+    }
+
     const hashed = await bcrypt.hash(password, 12)
+    const slug = email.toLowerCase().split('@')[0].replace(/[^a-z0-9]/g, '-')
+
+    const trialEndsAt = new Date()
+    trialEndsAt.setDate(trialEndsAt.getDate() + 14)
 
     const user = await prisma.user.create({
       data: {
@@ -33,8 +45,16 @@ export async function POST(request: Request) {
         email: email.toLowerCase().trim(),
         password: hashed,
         role: 'CLIENT',
+        client: {
+          create: {
+            name: name.trim(),
+            slug: `${slug}-${Date.now().toString(36)}`,
+            planId: plan?.id,
+            trialEndsAt,
+          },
+        },
       },
-      select: { id: true, name: true, email: true, role: true },
+      select: { id: true, name: true, email: true, role: true, clientId: true },
     })
 
     return NextResponse.json({ ok: true, user }, { status: 201 })
