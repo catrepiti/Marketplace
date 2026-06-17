@@ -32,12 +32,13 @@ export async function GET(request: Request) {
   if (clientId) salesWhere.clientId = clientId
   if (from || to) salesWhere.saleDate = dateFilter
 
+  const accountsWhere = clientId ? { clientId, status: 'active' } : { status: 'active' }
   const [sales, listingsCount] = await Promise.all([
     prisma.sale.findMany({ where: salesWhere, orderBy: { saleDate: 'desc' } }),
-    clientId
-      ? prisma.marketplaceAccount.count({ where: { clientId, status: 'active' } })
-      : prisma.marketplaceAccount.count({ where: { status: 'active' } }),
+    prisma.marketplaceAccount.count({ where: accountsWhere }),
   ])
+
+  const hasConnectedAccounts = listingsCount > 0
 
   const totalRevenue = sales.reduce((s, sale) => s + sale.totalPrice, 0)
   const totalOrders = sales.length
@@ -80,6 +81,7 @@ export async function GET(request: Request) {
   }))
 
   return NextResponse.json({
+    hasConnectedAccounts,
     totalRevenue: +totalRevenue.toFixed(2),
     totalOrders,
     totalItems,

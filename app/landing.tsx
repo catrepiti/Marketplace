@@ -4,7 +4,7 @@ import Link from 'next/link'
 import {
   BarChart3, TrendingUp, DollarSign, Shield, Search, Target,
   Star, ArrowRight, CheckCircle2, Zap, Users, Calculator,
-  ShoppingBag, Award, AlertTriangle, ChevronDown,
+  ShoppingBag, Award, AlertTriangle,
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -64,27 +64,8 @@ const BENEFITS = [
   'Suporte dedicado',
 ]
 
-const FAQ = [
-  {
-    q: 'O preço aumenta conforme minhas vendas crescem?',
-    a: 'Não. O valor da assinatura é fixo, independente do seu volume de vendas ou faturamento.',
-  },
-  {
-    q: 'Quantas contas de marketplace posso vincular?',
-    a: 'Você pode vincular até 3 contas de marketplace por assinatura (Mercado Livre, Shopee e/ou Amazon).',
-  },
-  {
-    q: 'As atualizações são cobradas à parte?',
-    a: 'Não. Todas as atualizações e novas funcionalidades são incluídas sem custo adicional na sua assinatura.',
-  },
-  {
-    q: 'Posso cancelar a qualquer momento?',
-    a: 'Sim. Não há fidelidade. Você pode cancelar sua assinatura quando quiser, sem multas ou taxas.',
-  },
-]
 
 export function LandingPage() {
-  const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [billingAnual, setBillingAnual] = useState(true)
 
   return (
@@ -310,31 +291,6 @@ export function LandingPage() {
                 ))}
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ── FAQ ── */}
-      <div className="border-t border-white/[0.04]">
-        <div className="max-w-2xl mx-auto px-6 py-20">
-          <h2 className="text-2xl font-black text-center mb-10">Perguntas frequentes</h2>
-          <div className="space-y-3">
-            {FAQ.map((item, i) => (
-              <div key={i} className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
-                <button
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full flex items-center justify-between px-5 py-4 text-left"
-                >
-                  <span className="text-sm font-semibold text-white/70">{item.q}</span>
-                  <ChevronDown className={`h-4 w-4 text-white/20 transition-transform ${openFaq === i ? 'rotate-180' : ''}`} />
-                </button>
-                {openFaq === i && (
-                  <div className="px-5 pb-4">
-                    <p className="text-sm text-white/35 leading-relaxed">{item.a}</p>
-                  </div>
-                )}
-              </div>
-            ))}
           </div>
         </div>
       </div>

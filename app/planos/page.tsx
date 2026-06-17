@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import {
-  Check, ArrowRight, Loader2, Rocket, Zap, CheckCircle2, ChevronDown,
+  Check, ArrowRight, Loader2, Rocket, Zap, CheckCircle2,
   BarChart3, Calculator, ShieldAlert, Search, ShoppingBag, Star,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -26,17 +26,10 @@ const BENEFITS = [
   { icon: ShoppingBag, label: 'Multi-marketplace integrado' },
 ]
 
-const FAQ = [
-  { q: 'O preço aumenta conforme minhas vendas crescem?', a: 'Não. O valor da assinatura é fixo, independente do seu volume de vendas ou faturamento.' },
-  { q: 'Quantas contas de marketplace posso vincular?', a: 'Até 3 contas de marketplace por assinatura (Mercado Livre, Shopee e/ou Amazon).' },
-  { q: 'As atualizações são cobradas à parte?', a: 'Não. Todas as atualizações e novas funcionalidades são incluídas sem custo adicional.' },
-  { q: 'Posso cancelar a qualquer momento?', a: 'Sim. Não há fidelidade. Cancele quando quiser, sem multas ou taxas.' },
-]
 
 export default function PlanosPage() {
   const [plans, setPlans] = useState<Plan[]>([])
   const [loading, setLoading] = useState(true)
-  const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [billingAnual, setBillingAnual] = useState(true)
 
   useEffect(() => {
@@ -176,29 +169,6 @@ export default function PlanosPage() {
                   <b.icon className="h-4 w-4 text-primary" />
                 </div>
                 <span className="text-sm text-white/50">{b.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* FAQ */}
-      <div className="border-t border-white/[0.04]">
-        <div className="max-w-2xl mx-auto px-6 py-16">
-          <h2 className="text-2xl font-bold text-center mb-10">Perguntas frequentes</h2>
-          <div className="space-y-3">
-            {FAQ.map((item, i) => (
-              <div key={i} className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
-                <button onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full flex items-center justify-between px-5 py-4 text-left">
-                  <span className="text-sm font-semibold text-white/70">{item.q}</span>
-                  <ChevronDown className={cn('h-4 w-4 text-white/20 transition-transform', openFaq === i && 'rotate-180')} />
-                </button>
-                {openFaq === i && (
-                  <div className="px-5 pb-4">
-                    <p className="text-sm text-white/35">{item.a}</p>
-                  </div>
-                )}
               </div>
             ))}
           </div>

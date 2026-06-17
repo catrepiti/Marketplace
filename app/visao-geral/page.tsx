@@ -5,12 +5,14 @@ import { useSession } from 'next-auth/react'
 import {
   TrendingUp, TrendingDown, DollarSign, ShoppingBag, Package,
   Star, AlertTriangle, ShieldAlert, Clock, XCircle, Megaphone,
-  BarChart3, Activity, Loader2, Calendar,
+  BarChart3, Activity, Loader2, Calendar, Link2, ArrowRight,
 } from 'lucide-react'
+import Link from 'next/link'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { cn } from '@/lib/utils'
 
 interface SalesData {
+  hasConnectedAccounts: boolean
   totalRevenue: number
   totalOrders: number
   totalItems: number
@@ -140,6 +142,7 @@ export default function VisaoGeralPage() {
           setSalesData(await res.json())
         } else {
           setSalesData({
+            hasConnectedAccounts: false,
             totalRevenue: 0, totalOrders: 0, totalItems: 0, avgTicket: 0,
             activeListings: 0, reputationScore: 75,
             salesByDay: [], salesByMarketplace: {}, topProducts: [], recentSales: [],
@@ -147,6 +150,7 @@ export default function VisaoGeralPage() {
         }
       } catch {
         setSalesData({
+          hasConnectedAccounts: false,
           totalRevenue: 0, totalOrders: 0, totalItems: 0, avgTicket: 0,
           activeListings: 0, reputationScore: 75,
           salesByDay: [], salesByMarketplace: {}, topProducts: [], recentSales: [],
@@ -200,6 +204,20 @@ export default function VisaoGeralPage() {
           {loading ? (
             <div className="flex justify-center py-20">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : salesData && !salesData.hasConnectedAccounts ? (
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <div className="h-20 w-20 rounded-2xl bg-primary/5 border border-primary/10 flex items-center justify-center mb-6">
+                <Link2 className="h-10 w-10 text-primary/40" />
+              </div>
+              <h2 className="text-xl font-bold text-white mb-2">Nenhuma loja conectada</h2>
+              <p className="text-sm text-white/30 max-w-md mb-8 leading-relaxed">
+                Conecte sua primeira conta de marketplace para começar a visualizar seus dados de vendas, faturamento e métricas em tempo real.
+              </p>
+              <Link href="/minha-conta"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-blue-400 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all">
+                Conectar minha loja <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
           ) : salesData && (
             <div className="space-y-6">
