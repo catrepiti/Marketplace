@@ -25,8 +25,9 @@ export async function GET() {
           slug: true,
           createdAt: true,
           plan: { select: { id: true, name: true, price: true, interval: true, features: true, maxAccounts: true } },
+          trialEndsAt: true,
           marketplaceAccounts: {
-            select: { marketplace: true, accountName: true, status: true, accessToken: true, sellerId: true, createdAt: true },
+            select: { id: true, marketplace: true, accountName: true, status: true, accessToken: true, sellerId: true, createdAt: true },
           },
           _count: { select: { sales: true, users: true, documents: true } },
         },
@@ -42,6 +43,7 @@ export async function GET() {
     result.client = {
       ...user.client,
       marketplaceAccounts: user.client.marketplaceAccounts.map(a => ({
+        id: a.id,
         marketplace: a.marketplace,
         accountName: a.accountName,
         status: a.status,

@@ -37,6 +37,7 @@ export default function PlanosPage() {
   const [plans, setPlans] = useState<Plan[]>([])
   const [loading, setLoading] = useState(true)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
+  const [billingAnual, setBillingAnual] = useState(true)
 
   useEffect(() => {
     fetch('/api/plans')
@@ -45,8 +46,9 @@ export default function PlanosPage() {
       .catch(() => setLoading(false))
   }, [])
 
-  const semestral = plans.find(p => p.name === 'Semestral')
+  const mensal = plans.find(p => p.name === 'Mensal')
   const anual = plans.find(p => p.name === 'Anual')
+  const activePlan = billingAnual ? anual : mensal
 
   return (
     <div className="min-h-screen bg-[#060b14] text-white">
@@ -80,81 +82,86 @@ export default function PlanosPage() {
             Planos simples e<br />
             <span className="bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent">transparentes</span>
           </h1>
-          <p className="text-lg text-white/35 max-w-xl mx-auto">
+          <p className="text-lg text-white/35 max-w-xl mx-auto mb-8">
             Preço fixo independente do volume de vendas. Todas as funcionalidades incluídas.
           </p>
+
+          {/* Toggle Mensal / Anual */}
+          <div className="flex items-center justify-center gap-3">
+            <span className={cn('text-sm font-semibold transition-colors', !billingAnual ? 'text-white' : 'text-white/30')}>Mensal</span>
+            <button onClick={() => setBillingAnual(!billingAnual)}
+              className="relative h-7 w-14 rounded-full bg-white/10 border border-white/[0.08] transition-colors focus:outline-none"
+              aria-label="Alternar plano">
+              <div className={cn(
+                'absolute top-0.5 h-6 w-6 rounded-full transition-all duration-300',
+                billingAnual ? 'left-[calc(100%-1.625rem)] bg-gradient-to-r from-primary to-blue-400 shadow-lg shadow-primary/40' : 'left-0.5 bg-white/40'
+              )} />
+            </button>
+            <span className={cn('text-sm font-semibold transition-colors', billingAnual ? 'text-white' : 'text-white/30')}>
+              Anual
+            </span>
+            {billingAnual && (
+              <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full">
+                -39% OFF
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Plans */}
-      <div className="max-w-3xl mx-auto px-6 pb-16">
+      {/* Plan */}
+      <div className="max-w-md mx-auto px-6 pb-16">
         {loading ? (
           <div className="flex justify-center py-20">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-            {/* Semestral */}
-            {semestral && (
-              <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-7 flex flex-col">
-                <h3 className="text-lg font-bold mb-1">Semestral</h3>
-                <p className="text-xs text-white/25 mb-5">Compromisso de 6 meses</p>
-                <div className="flex items-baseline gap-1 mb-5">
-                  <span className="text-sm text-white/40">R$</span>
-                  <span className="text-4xl font-black">89</span>
-                  <span className="text-xl font-bold">,90</span>
-                  <span className="text-sm text-white/25">/mês</span>
-                </div>
-                <Link href={`/cadastro?plano=${semestral.id}`}
-                  className="flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all mb-5">
-                  Começar 7 dias grátis <ArrowRight className="h-4 w-4" />
-                </Link>
-                <div className="flex-1 space-y-2.5">
-                  {(() => { try { return JSON.parse(semestral.features) as string[] } catch { return [] } })().map((f, i) => (
-                    <div key={i} className="flex items-start gap-2">
-                      <Check className="h-3.5 w-3.5 text-emerald-400 mt-0.5 shrink-0" />
-                      <span className="text-xs text-white/40">{f}</span>
-                    </div>
-                  ))}
-                </div>
+        ) : activePlan ? (
+          <div className={cn(
+            'relative rounded-2xl p-8 flex flex-col',
+            billingAnual
+              ? 'border border-primary/40 ring-2 ring-primary/20 bg-white/[0.03] shadow-lg shadow-primary/10'
+              : 'border border-white/[0.08] bg-white/[0.02]'
+          )}>
+            {billingAnual && (
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span className="text-[10px] font-bold bg-gradient-to-r from-primary to-blue-400 text-white px-4 py-1 rounded-full shadow-lg shadow-primary/40 whitespace-nowrap">
+                  Mais popular — Economize R$ 456/ano
+                </span>
               </div>
             )}
-
-            {/* Anual */}
-            {anual && (
-              <div className="relative rounded-2xl border border-primary/40 ring-2 ring-primary/20 bg-white/[0.03] p-7 flex flex-col shadow-lg shadow-primary/10">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="text-[10px] font-bold bg-gradient-to-r from-primary to-blue-400 text-white px-4 py-1 rounded-full shadow-lg shadow-primary/40 whitespace-nowrap">
-                    30% OFF — Mais popular
-                  </span>
-                </div>
-                <h3 className="text-lg font-bold mb-1">Anual</h3>
-                <p className="text-xs text-white/25 mb-5">Compromisso de 12 meses</p>
-                <div className="mb-5">
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-sm text-white/40">R$</span>
-                    <span className="text-4xl font-black">59</span>
-                    <span className="text-xl font-bold">,90</span>
-                    <span className="text-sm text-white/25">/mês</span>
-                  </div>
-                  <p className="text-[11px] text-emerald-400 mt-1">Economize R$ 360/ano</p>
-                </div>
-                <Link href={`/cadastro?plano=${anual.id}`}
-                  className="flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold bg-gradient-to-r from-primary to-blue-400 text-white shadow-md shadow-primary/30 hover:shadow-primary/50 transition-all mb-5">
-                  Começar 7 dias grátis <ArrowRight className="h-4 w-4" />
-                </Link>
-                <div className="flex-1 space-y-2.5">
-                  {(() => { try { return JSON.parse(anual.features) as string[] } catch { return [] } })().map((f, i) => (
-                    <div key={i} className="flex items-start gap-2">
-                      <Check className="h-3.5 w-3.5 text-emerald-400 mt-0.5 shrink-0" />
-                      <span className="text-xs text-white/40">{f}</span>
-                    </div>
-                  ))}
-                </div>
+            <h3 className="text-lg font-bold mb-1">{activePlan.name}</h3>
+            <p className="text-xs text-white/25 mb-5">
+              {billingAnual ? 'Cobrado anualmente (R$ 718,80/ano)' : 'Sem compromisso, cancele quando quiser'}
+            </p>
+            <div className="mb-6">
+              <div className="flex items-baseline gap-1">
+                <span className="text-sm text-white/40">R$</span>
+                <span className="text-5xl font-black">{Math.floor(activePlan.price)}</span>
+                <span className="text-2xl font-bold">,{String(Math.round((activePlan.price % 1) * 100)).padStart(2, '0')}</span>
+                <span className="text-sm text-white/25">/mês</span>
               </div>
-            )}
+              {billingAnual && <p className="text-[11px] text-emerald-400 mt-1">Economize R$ 38,00/mês em relação ao mensal</p>}
+            </div>
+            <Link href={`/cadastro?plano=${activePlan.id}`}
+              className={cn(
+                'flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold transition-all mb-6',
+                billingAnual
+                  ? 'bg-gradient-to-r from-primary to-blue-400 text-white shadow-md shadow-primary/30 hover:shadow-primary/50'
+                  : 'bg-white/5 border border-white/10 text-white hover:bg-white/10'
+              )}>
+              Começar 7 dias grátis <ArrowRight className="h-4 w-4" />
+            </Link>
+            <div className="space-y-2.5">
+              {(() => { try { return JSON.parse(activePlan.features) as string[] } catch { return [] } })().map((f, i) => (
+                <div key={i} className="flex items-start gap-2">
+                  <Check className="h-3.5 w-3.5 text-emerald-400 mt-0.5 shrink-0" />
+                  <span className="text-xs text-white/40">{f}</span>
+                </div>
+              ))}
+            </div>
           </div>
+        ) : (
+          <p className="text-center text-white/30 py-20">Nenhum plano disponível</p>
         )}
       </div>
 

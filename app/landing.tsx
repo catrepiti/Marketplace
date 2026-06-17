@@ -85,6 +85,7 @@ const FAQ = [
 
 export function LandingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
+  const [billingAnual, setBillingAnual] = useState(true)
 
   return (
     <div className="min-h-screen bg-[#060b14] text-white">
@@ -255,58 +256,52 @@ export function LandingPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-black mb-3">Planos simples e transparentes</h2>
             <p className="text-white/30">Comece grátis por 7 dias. Cancele quando quiser.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
 
-            {/* Semestral */}
-            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-7 flex flex-col">
-              <h3 className="text-lg font-bold mb-1">Semestral</h3>
-              <p className="text-xs text-white/25 mb-5">Compromisso de 6 meses</p>
-              <div className="mb-5">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-sm text-white/40">R$</span>
-                  <span className="text-4xl font-black">89</span>
-                  <span className="text-xl font-bold">,90</span>
-                  <span className="text-sm text-white/25">/mês</span>
-                </div>
-              </div>
-              <Link href="/cadastro?plano=semestral"
-                className="flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all mb-5">
-                Começar 7 dias grátis <ArrowRight className="h-4 w-4" />
-              </Link>
-              <div className="flex-1 space-y-2.5">
-                {BENEFITS.map((b, i) => (
-                  <div key={i} className="flex items-start gap-2">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 mt-0.5 shrink-0" />
-                    <span className="text-xs text-white/40">{b}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Anual */}
-            <div className="relative rounded-2xl border border-primary/40 ring-2 ring-primary/20 bg-white/[0.03] p-7 flex flex-col shadow-lg shadow-primary/10">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <span className="text-[10px] font-bold bg-gradient-to-r from-primary to-blue-400 text-white px-4 py-1 rounded-full shadow-lg shadow-primary/40 whitespace-nowrap">
-                  30% OFF — Mais popular
+            {/* Toggle Mensal / Anual */}
+            <div className="flex items-center justify-center gap-3 mt-8">
+              <span className={`text-sm font-semibold transition-colors ${!billingAnual ? 'text-white' : 'text-white/30'}`}>Mensal</span>
+              <button onClick={() => setBillingAnual(!billingAnual)}
+                className="relative h-7 w-14 rounded-full bg-white/10 border border-white/[0.08] transition-colors focus:outline-none"
+                aria-label="Alternar plano">
+                <div className={`absolute top-0.5 h-6 w-6 rounded-full transition-all duration-300 ${billingAnual ? 'left-[calc(100%-1.625rem)] bg-gradient-to-r from-primary to-blue-400 shadow-lg shadow-primary/40' : 'left-0.5 bg-white/40'}`} />
+              </button>
+              <span className={`text-sm font-semibold transition-colors ${billingAnual ? 'text-white' : 'text-white/30'}`}>
+                Anual
+              </span>
+              {billingAnual && (
+                <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full">
+                  -39% OFF
                 </span>
-              </div>
-              <h3 className="text-lg font-bold mb-1">Anual</h3>
-              <p className="text-xs text-white/25 mb-5">Compromisso de 12 meses</p>
-              <div className="mb-5">
+              )}
+            </div>
+          </div>
+
+          {/* Single plan card */}
+          <div className="max-w-md mx-auto">
+            <div className={`relative rounded-2xl p-8 flex flex-col ${billingAnual ? 'border border-primary/40 ring-2 ring-primary/20 bg-white/[0.03] shadow-lg shadow-primary/10' : 'border border-white/[0.08] bg-white/[0.02]'}`}>
+              {billingAnual && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                  <span className="text-[10px] font-bold bg-gradient-to-r from-primary to-blue-400 text-white px-4 py-1 rounded-full shadow-lg shadow-primary/40 whitespace-nowrap">
+                    Mais popular — Economize R$ 456/ano
+                  </span>
+                </div>
+              )}
+              <h3 className="text-lg font-bold mb-1">{billingAnual ? 'Plano Anual' : 'Plano Mensal'}</h3>
+              <p className="text-xs text-white/25 mb-5">{billingAnual ? 'Cobrado anualmente (R$ 718,80/ano)' : 'Sem compromisso, cancele quando quiser'}</p>
+              <div className="mb-6">
                 <div className="flex items-baseline gap-1">
                   <span className="text-sm text-white/40">R$</span>
-                  <span className="text-4xl font-black">59</span>
-                  <span className="text-xl font-bold">,90</span>
+                  <span className="text-5xl font-black">{billingAnual ? '59' : '97'}</span>
+                  <span className="text-2xl font-bold">,90</span>
                   <span className="text-sm text-white/25">/mês</span>
                 </div>
-                <p className="text-[11px] text-emerald-400 mt-1">Economize R$ 360/ano</p>
+                {billingAnual && <p className="text-[11px] text-emerald-400 mt-1">Economize R$ 38,00/mês em relação ao mensal</p>}
               </div>
-              <Link href="/cadastro?plano=anual"
-                className="flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold bg-gradient-to-r from-primary to-blue-400 text-white shadow-md shadow-primary/30 hover:shadow-primary/50 transition-all mb-5">
+              <Link href={`/cadastro?plano=${billingAnual ? 'anual' : 'mensal'}`}
+                className={`flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold transition-all mb-6 ${billingAnual ? 'bg-gradient-to-r from-primary to-blue-400 text-white shadow-md shadow-primary/30 hover:shadow-primary/50' : 'bg-white/5 border border-white/10 text-white hover:bg-white/10'}`}>
                 Começar 7 dias grátis <ArrowRight className="h-4 w-4" />
               </Link>
-              <div className="flex-1 space-y-2.5">
+              <div className="space-y-2.5">
                 {BENEFITS.map((b, i) => (
                   <div key={i} className="flex items-start gap-2">
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 mt-0.5 shrink-0" />

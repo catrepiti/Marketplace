@@ -11,25 +11,27 @@ async function main() {
     create: { name: 'Administrador', email: 'admin@marketplacehub.com', password: adminPassword, role: 'ADMIN' },
   })
 
+  const features = JSON.stringify([
+    'Dashboard financeiro completo',
+    'Score de atividade da conta',
+    'Monitoramento de reputação',
+    'Precificador automático',
+    'Análise de concorrentes',
+    'DRE — Resultado financeiro',
+    'Até 3 contas de marketplace',
+    'Dados de vendas e avaliações',
+    'Suporte dedicado',
+    'Atualizações sem custo adicional',
+  ])
+
   const plans = [
     {
-      name: 'Semestral',
-      price: 89.90,
-      interval: 'semestral',
+      name: 'Mensal',
+      price: 97.90,
+      interval: 'mensal',
       maxAccounts: 3,
       sortOrder: 1,
-      features: JSON.stringify([
-        'Dashboard financeiro completo',
-        'Score de atividade da conta',
-        'Monitoramento de reputação',
-        'Precificador automático',
-        'Análise de concorrentes',
-        'DRE — Resultado financeiro',
-        'Até 3 contas de marketplace',
-        'Dados de vendas e avaliações',
-        'Suporte dedicado',
-        'Atualizações sem custo adicional',
-      ]),
+      features,
     },
     {
       name: 'Anual',
@@ -37,18 +39,7 @@ async function main() {
       interval: 'anual',
       maxAccounts: 3,
       sortOrder: 2,
-      features: JSON.stringify([
-        'Dashboard financeiro completo',
-        'Score de atividade da conta',
-        'Monitoramento de reputação',
-        'Precificador automático',
-        'Análise de concorrentes',
-        'DRE — Resultado financeiro',
-        'Até 3 contas de marketplace',
-        'Dados de vendas e avaliações',
-        'Suporte dedicado',
-        'Atualizações sem custo adicional',
-      ]),
+      features,
     },
   ]
 
@@ -62,13 +53,13 @@ async function main() {
   }
 
   await prisma.plan.updateMany({
-    where: { name: { notIn: ['Semestral', 'Anual'] } },
+    where: { name: { notIn: ['Mensal', 'Anual'] } },
     data: { active: false },
   })
 
   console.log('✅ Seed concluído')
   console.log('   admin@marketplacehub.com / admin123')
-  console.log('   2 planos: Semestral R$89,90/mês | Anual R$59,90/mês')
+  console.log('   2 planos: Mensal R$97,90/mês | Anual R$59,90/mês')
 }
 
 main().catch(console.error).finally(() => prisma.$disconnect())
