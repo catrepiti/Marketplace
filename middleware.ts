@@ -26,6 +26,7 @@ export const config = {
     '/feedbacks/:path*',
     '/vendas/:path*',
     '/anuncios/:path*',
+    '/dre/:path*',
     '/visao-geral/:path*',
     '/admin/:path*',
     '/minha-conta/:path*',

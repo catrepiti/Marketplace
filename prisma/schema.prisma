@@ -40,6 +40,7 @@ model Client {
   documents           ClientDocument[]
   connectionInvites   ConnectionInvite[]
   sales               Sale[]
+  expenses            Expense[]
   notificationConfig  NotificationConfig?
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
@@ -142,6 +143,18 @@ model Sale {
   totalPrice  Float
   status      String   @default("paid")
   saleDate    DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+  clientId    String
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  category    String   // COMISSAO, CPV, FRETE, IMPOSTO, ADMINISTRATIVO, MARKETING, FINANCEIRO, OUTRO
+  description String
+  amount      Float
+  date        DateTime @default(now())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
