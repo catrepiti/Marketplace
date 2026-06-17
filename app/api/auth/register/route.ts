@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     const slug = email.toLowerCase().split('@')[0].replace(/[^a-z0-9]/g, '-')
 
     const trialEndsAt = new Date()
-    trialEndsAt.setDate(trialEndsAt.getDate() + 14)
+    trialEndsAt.setDate(trialEndsAt.getDate() + 7)
 
     const user = await prisma.user.create({
       data: {

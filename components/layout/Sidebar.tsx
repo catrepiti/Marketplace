@@ -7,7 +7,7 @@ import {
   ShoppingCart, MessageSquare, Megaphone,
   Users, Building2, LogOut, ChevronDown,
   PanelLeftClose, PanelLeftOpen, ChevronRight, LayoutGrid,
-  UserCog, Crown, Upload, BarChart3,
+  UserCog, Crown, Upload, BarChart3, Calculator,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ROLE_LABELS, Role } from '@/lib/session'
@@ -17,9 +17,10 @@ const mainNav = [
   { href: '/visao-geral', icon: LayoutGrid,    label: 'Visão Geral',  roles: ['ADMIN', 'ASSESSOR', 'CLIENT'] },
   { href: '/vendas',      icon: ShoppingCart,   label: 'Vendas',       roles: ['ADMIN', 'ASSESSOR', 'CLIENT'] },
   { href: '/feedbacks',   icon: MessageSquare,  label: 'Avaliações',   roles: ['ADMIN', 'ASSESSOR', 'CLIENT'] },
-  { href: '/anuncios',    icon: Megaphone,      label: 'Anúncios',     roles: ['ADMIN', 'ASSESSOR', 'CLIENT'] },
-  { href: '/dre',         icon: BarChart3,      label: 'DRE',          roles: ['ADMIN', 'ASSESSOR', 'CLIENT'] },
-  { href: '/minha-conta', icon: UserCog,        label: 'Meu Perfil',   roles: ['ADMIN', 'ASSESSOR', 'CLIENT'] },
+  { href: '/anuncios',      icon: Megaphone,      label: 'Anúncios',       roles: ['ADMIN', 'ASSESSOR', 'CLIENT'] },
+  { href: '/precificador', icon: Calculator,     label: 'Precificador',   roles: ['ADMIN', 'ASSESSOR', 'CLIENT'] },
+  { href: '/dre',          icon: BarChart3,      label: 'DRE',            roles: ['ADMIN', 'ASSESSOR', 'CLIENT'] },
+  { href: '/minha-conta',  icon: UserCog,        label: 'Meu Perfil',     roles: ['ADMIN', 'ASSESSOR', 'CLIENT'] },
 ]
 
 const adminNav = [

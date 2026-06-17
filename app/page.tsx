@@ -1,10 +1,10 @@
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 import { authOptions } from '@/lib/auth'
+import { LandingPage } from './landing'
 
 export default async function Home() {
   const session = await getServerSession(authOptions)
-  if (!session) redirect('/login')
-  const role = (session.user as any)?.role
-  redirect('/visao-geral')
+  if (session) redirect('/visao-geral')
+  return <LandingPage />
 }

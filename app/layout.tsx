@@ -13,7 +13,7 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: { default: 'merly', template: '%s · merly' },
-  description: 'Plataforma unificada de gestão de marketplaces',
+  description: 'Análise inteligente de marketplaces — Dashboard financeiro, precificador automático e monitoramento de reputação',
   metadataBase: new URL('https://merly.com.br'),
   themeColor: '#0080ff',
   icons: {

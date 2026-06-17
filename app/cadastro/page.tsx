@@ -114,7 +114,7 @@ function CadastroForm() {
           <h2 className="text-lg font-bold text-white">Conta criada!</h2>
           <p className="text-sm text-white/40">
             {activePlan && <>Plano <span className="text-white/70 font-medium">{activePlan.name}</span> ativado. </>}
-            Seu teste grátis de 14 dias começou.
+            Seu teste grátis de 7 dias começou.
           </p>
           <p className="text-xs text-white/25">Entrando automaticamente...</p>
           <Loader2 className="h-5 w-5 animate-spin text-primary" />
@@ -148,7 +148,7 @@ function CadastroForm() {
               'Mercado Livre, Shopee e Amazon integrados',
               'Dashboard com métricas em tempo real',
               'Avaliações e vendas centralizadas',
-              '14 dias grátis para experimentar',
+              '7 dias grátis para experimentar',
             ].map((t, i) => (
               <div key={i} className="flex items-center gap-2.5">
                 <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
@@ -181,7 +181,7 @@ function CadastroForm() {
             <div>
               <div className="mb-6 text-center">
                 <h1 className="text-xl font-bold mb-1">Escolha seu plano</h1>
-                <p className="text-sm text-white/30">Todos incluem 14 dias grátis</p>
+                <p className="text-sm text-white/30">Todos incluem 7 dias grátis</p>
               </div>
               <div className="space-y-3">
                 {plans.map(plan => {
@@ -253,7 +253,7 @@ function CadastroForm() {
                     <p className="text-sm font-bold text-primary">
                       {activePlan.price > 2000 ? 'Sob consulta' : `R$ ${activePlan.price}/mês`}
                     </p>
-                    <p className="text-[10px] text-emerald-400">14 dias grátis</p>
+                    <p className="text-[10px] text-emerald-400">7 dias grátis</p>
                   </div>
                 </div>
               )}

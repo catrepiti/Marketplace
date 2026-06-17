@@ -4,7 +4,6 @@ import bcrypt from 'bcryptjs'
 const prisma = new PrismaClient()
 
 async function main() {
-  // ── Usuários do time ──────────────────────────────────────────────────────
   const adminPassword = await bcrypt.hash('admin123', 12)
   await prisma.user.upsert({
     where:  { email: 'admin@marketplacehub.com' },
@@ -12,87 +11,64 @@ async function main() {
     create: { name: 'Administrador', email: 'admin@marketplacehub.com', password: adminPassword, role: 'ADMIN' },
   })
 
-  // ── Planos SaaS ───────────────────────────────────────────────────────────
   const plans = [
     {
-      name: 'Starter',
-      price: 197,
-      interval: 'monthly',
-      maxAccounts: 1,
+      name: 'Semestral',
+      price: 89.90,
+      interval: 'semestral',
+      maxAccounts: 3,
       sortOrder: 1,
       features: JSON.stringify([
-        '1 marketplace integrado',
-        'Dashboard em tempo real',
-        'Relatório de vendas',
-        'Avaliações e feedbacks',
-        'Suporte por e-mail',
+        'Dashboard financeiro completo',
+        'Score de atividade da conta',
+        'Monitoramento de reputação',
+        'Precificador automático',
+        'Análise de concorrentes',
+        'DRE — Resultado financeiro',
+        'Até 3 contas de marketplace',
+        'Dados de vendas e avaliações',
+        'Suporte dedicado',
+        'Atualizações sem custo adicional',
       ]),
     },
     {
-      name: 'Professional',
-      price: 497,
-      interval: 'monthly',
+      name: 'Anual',
+      price: 59.90,
+      interval: 'anual',
       maxAccounts: 3,
       sortOrder: 2,
       features: JSON.stringify([
-        'Até 3 marketplaces integrados',
-        'Dashboard em tempo real',
-        'Relatório completo de vendas',
-        'Gestão de anúncios',
-        'Avaliações e feedbacks',
-        'Importação de dados CSV',
-        'Assessoria com acesso dedicado',
-        'Suporte prioritário',
-      ]),
-    },
-    {
-      name: 'Business',
-      price: 997,
-      interval: 'monthly',
-      maxAccounts: 10,
-      sortOrder: 3,
-      features: JSON.stringify([
-        'Marketplaces ilimitados',
-        'Dashboard em tempo real',
-        'Relatórios avançados e exportação',
-        'Gestão completa de anúncios',
-        'Avaliações e feedbacks',
-        'Importação de dados CSV e API',
-        'Multi-usuários por conta',
-        'Assessoria com acesso total',
-        'Suporte prioritário via WhatsApp',
-        'Onboarding personalizado',
-      ]),
-    },
-    {
-      name: 'Enterprise',
-      price: 2497,
-      interval: 'monthly',
-      maxAccounts: 999,
-      sortOrder: 4,
-      features: JSON.stringify([
-        'Tudo do plano Business',
-        'Operações ilimitadas',
-        'API de integração dedicada',
-        'SLA garantido 99.9%',
-        'Gerente de conta exclusivo',
-        'Customizações sob demanda',
-        'Treinamento para equipe',
-        'Relatórios white-label',
+        'Dashboard financeiro completo',
+        'Score de atividade da conta',
+        'Monitoramento de reputação',
+        'Precificador automático',
+        'Análise de concorrentes',
+        'DRE — Resultado financeiro',
+        'Até 3 contas de marketplace',
+        'Dados de vendas e avaliações',
+        'Suporte dedicado',
+        'Atualizações sem custo adicional',
       ]),
     },
   ]
 
   for (const plan of plans) {
     const existing = await prisma.plan.findFirst({ where: { name: plan.name } })
-    if (!existing) {
+    if (existing) {
+      await prisma.plan.update({ where: { id: existing.id }, data: plan })
+    } else {
       await prisma.plan.create({ data: { ...plan, active: true } })
     }
   }
 
+  await prisma.plan.updateMany({
+    where: { name: { notIn: ['Semestral', 'Anual'] } },
+    data: { active: false },
+  })
+
   console.log('✅ Seed concluído')
   console.log('   admin@marketplacehub.com / admin123')
-  console.log('   4 planos SaaS criados: Starter, Professional, Business, Enterprise')
+  console.log('   2 planos: Semestral R$89,90/mês | Anual R$59,90/mês')
 }
 
 main().catch(console.error).finally(() => prisma.$disconnect())
