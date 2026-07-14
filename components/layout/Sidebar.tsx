@@ -8,6 +8,7 @@ import {
   Users, Building2, LogOut, ChevronDown,
   PanelLeftClose, PanelLeftOpen, ChevronRight, LayoutGrid,
   UserCog, Crown, Upload, BarChart3, Calculator, Sparkles,
+  FileText, Target,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ROLE_LABELS, Role } from '@/lib/session'
@@ -21,6 +22,8 @@ const mainNav = [
   { href: '/garimpador',   icon: Sparkles,       label: 'Garimpador',     roles: ['ADMIN', 'ASSESSOR', 'CLIENT'] },
   { href: '/precificador', icon: Calculator,     label: 'Precificador',   roles: ['ADMIN', 'ASSESSOR', 'CLIENT'] },
   { href: '/dre',          icon: BarChart3,      label: 'DRE',            roles: ['ADMIN', 'ASSESSOR', 'CLIENT'] },
+  { href: '/relatorios',   icon: FileText,       label: 'Relatórios',     roles: ['ADMIN', 'ASSESSOR', 'CLIENT'] },
+  { href: '/central',      icon: Target,         label: 'Central 20k',    roles: ['ADMIN', 'ASSESSOR'] },
   { href: '/minha-conta',  icon: UserCog,        label: 'Meu Perfil',     roles: ['ADMIN', 'ASSESSOR', 'CLIENT'] },
 ]
 

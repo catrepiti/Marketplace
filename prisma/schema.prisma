@@ -41,6 +41,7 @@ model Client {
   connectionInvites   ConnectionInvite[]
   sales               Sale[]
   expenses            Expense[]
+  weeklyReports       WeeklyReport[]
   notificationConfig  NotificationConfig?
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
@@ -145,6 +146,28 @@ model Sale {
   saleDate    DateTime @default(now())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model WeeklyReport {
+  id              String    @id @default(cuid())
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  weekStart       DateTime
+  weekEnd         DateTime
+  totalRevenue    Float     @default(0)
+  totalOrders     Int       @default(0)
+  avgTicket       Float     @default(0)
+  totalExpenses   Float     @default(0)
+  netResult       Float     @default(0)
+  revenueDelta    Float     @default(0) // % vs semana anterior
+  metricsJson     String    @default("{}") // detalhes: por marketplace, top produtos
+  aiSummary       String    @default("")
+  aiActions       String    @default("[]") // JSON array de ações recomendadas
+  status          String    @default("generated") // generated | sent | error
+  sentAt          DateTime?
+  createdAt       DateTime  @default(now())
+
+  @@unique([clientId, weekStart])
 }
 
 model Expense {
