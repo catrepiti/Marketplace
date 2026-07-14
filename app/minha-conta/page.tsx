@@ -130,6 +130,27 @@ export default function MinhaContaPage() {
     if (res.ok) load()
   }
 
+  const [checkoutLoading, setCheckoutLoading] = useState(false)
+  const [checkoutError, setCheckoutError] = useState('')
+
+  async function handleCheckout() {
+    setCheckoutLoading(true)
+    setCheckoutError('')
+    try {
+      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+      const data = await res.json()
+      if (!res.ok) {
+        setCheckoutError(data.error ?? 'Erro ao iniciar o checkout')
+        setCheckoutLoading(false)
+        return
+      }
+      window.location.href = data.url
+    } catch {
+      setCheckoutError('Erro de conexão ao iniciar o checkout')
+      setCheckoutLoading(false)
+    }
+  }
+
   const client = profile?.client
   const accounts: any[] = client?.marketplaceAccounts ?? []
   const connectedCount = accounts.length
@@ -287,6 +308,22 @@ export default function MinhaContaPage() {
                           </div>
                         ))}
                       </div>
+                      {client?.subscriptionStatus !== 'active' && (
+                        <div className="mt-6 pt-5 border-t border-white/[0.06]">
+                          <Button onClick={handleCheckout} disabled={checkoutLoading} className="w-full sm:w-auto">
+                            {checkoutLoading
+                              ? <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                              : <CreditCard className="h-4 w-4 mr-2" />}
+                            Assinar com Mercado Pago
+                          </Button>
+                          {checkoutError && (
+                            <p className="text-xs text-red-400 mt-2">{checkoutError}</p>
+                          )}
+                          <p className="text-[11px] text-white/20 mt-2">
+                            Pagamento recorrente seguro via Mercado Pago (cartão ou saldo MP). Cancele quando quiser.
+                          </p>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div className="p-6 text-center py-12">
@@ -303,15 +340,32 @@ export default function MinhaContaPage() {
                   <div className="p-6 space-y-4">
                     <div className="flex items-center justify-between py-2">
                       <span className="text-xs text-white/30">Método de pagamento</span>
-                      <span className="text-xs text-white/50">Não configurado</span>
+                      <span className="text-xs text-white/50">
+                        {client?.subscriptionStatus === 'active' ? 'Mercado Pago (recorrente)' : 'Não configurado'}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between py-2 border-t border-white/[0.04]">
-                      <span className="text-xs text-white/30">Próxima cobrança</span>
-                      <span className="text-xs text-white/50">—</span>
+                      <span className="text-xs text-white/30">Assinatura</span>
+                      <span className={cn(
+                        'text-xs font-medium',
+                        client?.subscriptionStatus === 'active' ? 'text-emerald-400'
+                          : client?.subscriptionStatus === 'pending' ? 'text-yellow-400'
+                          : ['paused', 'cancelled'].includes(client?.subscriptionStatus) ? 'text-red-400'
+                          : 'text-white/50'
+                      )}>
+                        {{
+                          active: 'Ativa',
+                          pending: 'Aguardando pagamento',
+                          paused: 'Pausada',
+                          cancelled: 'Cancelada',
+                        }[client?.subscriptionStatus as string] ?? 'Nenhuma'}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between py-2 border-t border-white/[0.04]">
                       <span className="text-xs text-white/30">Status</span>
-                      <span className="text-xs font-medium text-emerald-400">{trialActive ? 'Em teste gratuito' : plan ? 'Ativo' : 'Inativo'}</span>
+                      <span className="text-xs font-medium text-emerald-400">
+                        {client?.subscriptionStatus === 'active' ? 'Assinante' : trialActive ? 'Em teste gratuito' : plan ? 'Ativo' : 'Inativo'}
+                      </span>
                     </div>
                   </div>
                 </div>

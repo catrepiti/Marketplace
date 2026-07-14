@@ -26,6 +26,8 @@ export async function GET() {
           createdAt: true,
           plan: { select: { id: true, name: true, price: true, interval: true, features: true, maxAccounts: true } },
           trialEndsAt: true,
+          subscriptionStatus: true,
+          subscriptionUpdatedAt: true,
           marketplaceAccounts: {
             select: { id: true, marketplace: true, accountName: true, status: true, accessToken: true, sellerId: true, createdAt: true },
           },
